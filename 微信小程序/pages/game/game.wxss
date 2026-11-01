@@ -1,0 +1,108 @@
+.btns { display: flex; gap: 16rpx; }
+.stagewrap {
+  background: #fff; border-radius: 40rpx; min-height: 680rpx;
+  margin: 24rpx; padding: 36rpx 32rpx; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.gname { display: flex; justify-content: space-between; width: 100%; font-size: 26rpx; color: #68766F; margin-bottom: 20rpx; }
+.prompt { font-size: 33rpx; font-weight: 700; text-align: center; min-height: 52rpx; line-height: 1.5; }
+.hl-g { color: #177E6A; }
+.hl-r { color: #E8663C; }
+.center { text-align: center; }
+
+/* ── 红绿灯 ── */
+.bigcard {
+  width: 300rpx; height: 300rpx; border-radius: 40rpx; background: #E8F5E9;
+  display: flex; align-items: center; justify-content: center;
+  margin: 36rpx 0; box-shadow: 0 6rpx 20rpx rgba(20, 50, 44, 0.12);
+}
+.bigcard.bad { background: #FBE9E2; }
+.bigcard.gold { background: #FFF4D6; }
+.stimemoji { font-size: 128rpx; }
+@keyframes hitpop { 0% { transform: scale(1); } 40% { transform: scale(1.14); } 100% { transform: scale(1); } }
+@keyframes ringG { from { box-shadow: 0 0 0 0 rgba(23, 126, 106, 0.5); } to { box-shadow: 0 0 0 48rpx rgba(23, 126, 106, 0); } }
+@keyframes ringB { from { box-shadow: 0 0 0 0 rgba(232, 102, 60, 0.5); } to { box-shadow: 0 0 0 48rpx rgba(232, 102, 60, 0); } }
+.bigcard.hitpop { animation: hitpop 0.3s ease; }
+.bigcard.flash-good { animation: hitpop 0.3s ease, ringG 0.45s ease-out; background: #CBEFDD; }
+.bigcard.flash-bad { animation: hitpop 0.3s ease, ringB 0.45s ease-out; background: #F8CDBD; }
+.feedback { min-height: 48rpx; font-size: 30rpx; font-weight: 800; }
+.feedback.ok { color: #177E6A; }
+.feedback.no { color: #E8663C; }
+.fbsub { font-size: 25rpx; color: #68766F; font-weight: 400; }
+
+@keyframes flyup { from { opacity: 1; transform: translateX(-50%) scale(1); } to { opacity: 0; transform: translateX(-50%) scale(1.45) translateY(-104rpx); } }
+.flylayer { position: absolute; left: 0; right: 0; top: 30%; pointer-events: none; }
+.fly {
+  position: absolute; left: 50%; font-size: 60rpx; font-weight: 800; color: #177E6A;
+  animation: flyup 0.65s ease-out forwards;
+}
+.fly.gold { color: #C8860A; }
+.fly.no { color: #E8663C; }
+.fly.mutedfly { color: #68766F; font-size: 34rpx; }
+
+/* ── 星星复现 ── */
+.simon { display: flex; flex-wrap: wrap; justify-content: space-between; width: 100%; max-width: 600rpx; margin: 28rpx 0; }
+.pad { width: 288rpx; height: 288rpx; margin-bottom: 24rpx; border-radius: 36rpx; opacity: 0.55; }
+.pad.lit { opacity: 1; transform: scale(1.04); }
+.p0 { background: #4CA6D9; } .p1 { background: #E8A13C; } .p2 { background: #7FBF6A; } .p3 { background: #B98BD6; }
+.simonmsg { font-size: 30rpx; font-weight: 700; min-height: 44rpx; }
+
+/* ── 大小擂台 ── */
+.opprow { display: flex; align-items: center; gap: 20rpx; width: 100%; margin-bottom: 8rpx; }
+.oppemoji { font-size: 64rpx; }
+.hpbar { height: 24rpx; border-radius: 14rpx; background: #EFEFEF; overflow: hidden; margin-top: 6rpx; }
+.hpfill { height: 100%; background: linear-gradient(90deg, #E8663C, #F2A03C); transition: width 0.35s; border-radius: 14rpx; }
+.rulebadge {
+  font-size: 30rpx; font-weight: 700; border-radius: 24rpx; padding: 14rpx 28rpx; margin: 20rpx 0;
+}
+.rulebadge.rm { background: #E7F3EF; color: #11594B; }
+.rulebadge.rs { background: #FBE9E2; color: #B4401C; }
+.opprow2 { width: 100%; display: flex; justify-content: center; margin: 8rpx 0; }
+.char { font-weight: 800; line-height: 1.3; }
+.cbig { font-size: 190rpx; }
+.csmall { font-size: 76rpx; }
+.comboline { min-height: 44rpx; font-size: 30rpx; font-weight: 800; color: #E8663C; }
+@keyframes flipin { 0% { transform: translateX(-50%) scale(0.3); opacity: 0; } 55% { transform: translateX(-50%) scale(1.15); opacity: 1; } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
+@keyframes fadeout { to { opacity: 0; } }
+.flipbanner {
+  position: absolute; top: 16%; left: 50%; transform: translateX(-50%);
+  background: #E8663C; color: #fff; font-size: 40rpx; font-weight: 800;
+  padding: 16rpx 44rpx; border-radius: 28rpx; white-space: nowrap; z-index: 8;
+  box-shadow: 0 8rpx 28rpx rgba(232, 102, 60, 0.4);
+  animation: flipin 0.5s ease, fadeout 0.35s ease 0.65s forwards;
+}
+.tapbtns { display: flex; gap: 28rpx; width: 100%; margin-top: 12rpx; }
+.tapbtn { flex: 1; border-radius: 32rpx; padding: 36rpx 0; font-size: 48rpx; font-weight: 800; color: #fff; }
+.tapbtn-hover { transform: scale(0.93); }
+.tapbtn.a { background: #177E6A; }
+.tapbtn.b { background: #E8663C; }
+
+/* ── 通用 ── */
+.timebar { height: 14rpx; border-radius: 8rpx; background: #EFEFEF; width: 100%; margin-top: 28rpx; overflow: hidden; }
+.timefill { height: 100%; background: #177E6A; transition: width 0.5s linear; }
+
+.cheer { font-size: 80rpx; }
+.roundtitle { font-size: 36rpx; font-weight: 800; margin-top: 16rpx; }
+
+/* ── 收工仪式 ── */
+.endtitle { font-size: 30rpx; color: #68766F; }
+.balloon {
+  width: 240rpx; height: 240rpx; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8FD0C0, #177E6A);
+  margin: 36rpx auto;
+  transition: width 3.8s ease-in-out, height 3.8s ease-in-out;
+}
+.balloon.big { width: 400rpx; height: 400rpx; }
+.brmsg { font-size: 34rpx; font-weight: 700; min-height: 52rpx; }
+.stars3 { display: flex; gap: 20rpx; justify-content: center; margin: 24rpx 0; }
+.s3 { font-size: 80rpx; opacity: 0.18; transition: opacity 0.3s; }
+.s3.on { opacity: 1; }
+.moodrow { display: flex; gap: 28rpx; justify-content: center; }
+.mood { font-size: 68rpx; width: 128rpx; height: 128rpx; border: 4rpx solid #E3E9E6; border-radius: 32rpx; background: #fff; line-height: 120rpx; text-align: center; padding: 0; }
+.mood.sel { border-color: #177E6A; background: #E7F3EF; }
+
+.claimbtn { position: relative; overflow: hidden; touch-action: none; }
+.claimring { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255, 255, 255, 0.28); width: 0; transition: width 2.5s linear; pointer-events: none; }
+.claimbtn .claimring { transition: width 2.5s linear; }
+.claimtxt { position: relative; z-index: 2; }
+.claimed-ok { color: #1B7D46; font-weight: 700; margin-top: 24rpx; }

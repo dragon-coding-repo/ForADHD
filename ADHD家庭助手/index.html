@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E332E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ADHD家庭助手">
+<title>ADHD家庭助手</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{
+  --dark:#0E332E; --primary:#177E6A; --primary-deep:#11594B; --tint:#E7F3EF;
+  --accent:#E8663C; --accent-tint:#FBE9E2; --text:#22312C; --muted:#68766F;
+  --line:#E3E9E6; --card:#FFFFFF; --bg:#F4F7F6; --gray:#F2F3F3;
+  --radius:14px; --nav-h:58px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  background:var(--bg);color:var(--text);font-size:16px;line-height:1.55;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 10px);}
+#app{max-width:520px;margin:0 auto;min-height:100vh;position:relative}
+h1,h2,h3{margin:0;line-height:1.3}
+button{font-family:inherit;border:none;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--text)}
+.hide{display:none!important}
+
+/* ── top bar ── */
+.topbar{position:sticky;top:0;z-index:20;background:var(--dark);color:#fff;
+  padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between}
+.topbar .tt{font-size:19px;font-weight:700;letter-spacing:.5px}
+.topbar .sub{font-size:12px;color:#8FBDB2}
+.topbar button.ghost{background:rgba(255,255,255,.12);color:#fff;border-radius:20px;padding:6px 14px;font-size:13px}
+.backbtn{background:rgba(255,255,255,.12);border-radius:50%;width:32px;height:32px;color:#fff;font-size:17px;
+  display:flex;align-items:center;justify-content:center;margin-right:10px;flex:none}
+
+/* ── views ── */
+.view{padding:14px 14px 8px;display:none}
+.view.on{display:block}
+.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(20,50,44,.06)}
+.card h3{font-size:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.card h3 .more{font-size:13px;color:var(--primary);font-weight:400}
+.sec-title{font-size:14px;color:var(--muted);margin:16px 4px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-title b{color:var(--text);font-size:16px}
+
+/* ── balance ── */
+.balance{background:linear-gradient(135deg,var(--dark),var(--primary-deep));color:#fff;border-radius:18px;
+  padding:20px 18px;margin-bottom:12px;position:relative;overflow:hidden}
+.balance .num{font-size:44px;font-weight:800;line-height:1.1}
+.balance .num small{font-size:16px;font-weight:400;color:#9DC9BE;margin-left:4px}
+.balance .lbl{font-size:13px;color:#9DC9BE;margin-top:2px}
+.balance .split{display:flex;gap:22px;margin-top:12px;font-size:12.5px;color:#BFE0D7}
+.balance .split b{color:#fff;font-size:15px;display:block}
+.balance:after{content:"";position:absolute;right:-40px;top:-46px;width:150px;height:150px;border-radius:50%;
+  background:rgba(255,255,255,.07)}
+
+/* ── buttons & chips ── */
+.btn{background:var(--primary);color:#fff;border-radius:12px;padding:11px 16px;font-size:15px;font-weight:600;width:100%}
+.btn.acc{background:var(--accent)}
+.btn.plain{background:var(--tint);color:var(--primary)}
+.btn.sm{width:auto;padding:7px 13px;font-size:13.5px;border-radius:9px}
+.btn:disabled{opacity:.45}
+.btnrow{display:flex;gap:10px;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--gray);color:var(--text);border-radius:18px;padding:7px 14px;font-size:13.5px;border:1.5px solid transparent}
+.chip.sel{background:var(--tint);border-color:var(--primary);color:var(--primary);font-weight:600}
+.chip.sel.neg{background:var(--accent-tint);border-color:var(--accent);color:var(--accent)}
+
+/* ── forms ── */
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;outline:none}
+.field input:focus,.field textarea:focus{border-color:var(--primary)}
+.frow{display:flex;gap:10px}.frow .field{flex:1}
+
+/* ── list rows ── */
+.row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.row .grow{flex:1;min-width:0}
+.row .t1{font-size:15px;font-weight:600}
+.row .t2{font-size:12.5px;color:var(--muted);margin-top:2px;word-break:break-all}
+.tag{font-size:11px;border-radius:6px;padding:2px 7px;background:var(--tint);color:var(--primary);margin-right:5px;display:inline-block}
+.tag.neg{background:var(--accent-tint);color:var(--accent)}
+.tag.pos{background:#E8F5E9;color:#1B7D46}
+.del{color:#C9CFCC;font-size:14px;background:none;padding:6px}
+.empty{color:#A9B5AF;font-size:13.5px;text-align:center;padding:22px 10px}
+
+/* ── star grid ── */
+.weeknav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.weeknav .wk{font-size:15px;font-weight:700}
+.weeknav button{background:var(--gray);border-radius:9px;width:34px;height:32px;font-size:15px;color:var(--text)}
+.grid{width:100%;border-collapse:collapse}
+.grid th{font-size:11.5px;color:var(--muted);font-weight:400;padding:4px 0}
+.grid td{padding:3px 1px;text-align:center}
+.grid .gname{font-size:13.5px;text-align:left;max-width:120px;word-break:break-all;padding-right:6px}
+.star{width:34px;height:34px;border-radius:10px;background:var(--gray);font-size:17px;color:#C4CDC9;line-height:34px;padding:0}
+.star.on{background:#FFD66B;color:#8A6100;box-shadow:0 1px 3px rgba(200,150,0,.35)}
+.star.today{outline:2px solid var(--primary);outline-offset:-2px}
+.grid .sum{font-size:12px;color:var(--primary);font-weight:700}
+.grid tr.total .gname{font-size:12.5px;color:var(--muted)}
+.addgoal{display:flex;gap:8px;margin-top:12px}
+.addgoal input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px}
+
+/* ── reward ── */
+.rrow{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.rrow:last-child{border-bottom:none}
+.rrow .grow{flex:1}
+.rrow .cost{font-size:13px;color:var(--accent);font-weight:700;margin-top:2px}
+.rrow .name{font-size:14.5px;font-weight:600}
+.rrow .name.done{ text-decoration:line-through;color:#A9B5AF}
+
+/* ── schedule ── */
+.srow{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.srow:last-child{border-bottom:none}
+.srow .tm{font-size:13px;color:var(--primary);font-weight:700;width:48px;flex:none}
+.srow .it{flex:1;font-size:14.5px}
+.srow .it.done{color:#A9B5AF;text-decoration:line-through}
+.ck{width:24px;height:24px;border-radius:8px;border:2px solid #CBD6D1;background:#fff;flex:none;padding:0;font-size:14px;color:transparent;line-height:20px}
+.ck.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.prog{height:8px;border-radius:5px;background:var(--gray);overflow:hidden;margin-top:10px}
+.prog i{display:block;height:100%;background:var(--primary);border-radius:5px;transition:width .3s}
+.prog.acc i{background:var(--accent)}
+
+/* ── reader ── */
+.chlist .row .num{width:34px;height:34px;border-radius:10px;background:var(--tint);color:var(--primary);
+  font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none}
+.reader{background:#fff;border-radius:var(--radius);padding:20px 18px;font-size:calc(15.5px * var(--fs,1))}
+.reader.h1{font-size:22px;font-weight:800;color:var(--dark);margin:18px 0 10px}
+.reader h2{font-size:18px;font-weight:700;color:var(--primary);margin:18px 0 8px}
+.reader p{text-align:justify;margin:0 0 11px;color:#2C3A34}
+.reader table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0 14px}
+.reader th{background:var(--primary);color:#fff;padding:8px;font-weight:600;text-align:left}
+.reader td{border-bottom:1px solid var(--line);padding:8px;vertical-align:top}
+.reader tr:nth-child(even) td{background:var(--tint)}
+.reader .tip{background:var(--tint);border-radius:12px;padding:13px 15px;margin:12px 0;font-size:14px;color:#1F463C}
+.reader .tip b{color:var(--primary);display:block;margin-bottom:4px}
+.fontctl{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.fontctl button{background:var(--gray);border-radius:8px;width:34px;height:30px;font-size:14px}
+
+/* ── slides ── */
+.slide{border-bottom:1px solid var(--line);padding:13px 2px}
+.slide:last-child{border-bottom:none}
+.slide .sn{font-size:12px;color:var(--muted);margin-bottom:3px}
+.slide .st{font-size:16px;font-weight:700;margin-bottom:5px}
+.slide .sl{font-size:13.5px;color:#41504A;margin:2px 0;padding-left:12px;position:relative}
+.slide .sl:before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--primary)}
+
+/* ── hotline ── */
+.hot{background:linear-gradient(135deg,#7A2E1B,var(--accent));color:#fff;border-radius:16px;padding:18px;margin-bottom:12px}
+.hot .h1{font-size:17px;font-weight:700}
+.hot .num{font-size:30px;font-weight:800;margin:6px 0 2px}
+.hot .d{font-size:12.5px;color:#FFD9CB}
+
+/* ── timer modal ── */
+.mask{position:fixed;inset:0;background:rgba(10,30,26,.55);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow:auto}
+.sheet .grab{width:40px;height:4px;border-radius:3px;background:#D8DFDC;margin:0 auto 14px}
+.sheet h3{font-size:18px;margin-bottom:14px;text-align:center}
+.timer-num{font-size:64px;font-weight:800;text-align:center;color:var(--dark);font-variant-numeric:tabular-nums;margin:8px 0}
+.timer-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:12px}
+
+/* ── bottom nav ── */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#fff;border-top:1px solid var(--line);
+  display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+.navin{width:100%;max-width:520px;display:flex}
+nav .ni{flex:1;background:none;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0 7px;
+  color:#9AA8A2;font-size:10.5px}
+nav .ni .ic{font-size:20px;line-height:1}
+nav .ni.on{color:var(--primary);font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 24px);background:rgba(14,51,46,.92);
+  color:#fff;font-size:14px;border-radius:22px;padding:10px 20px;z-index:80;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <button class="backbtn hide" id="backBtn" onclick="goBack()">‹</button>
+      <div><div class="tt" id="tt">ADHD家庭助手</div><div class="sub" id="sub">让每一天更可预期</div></div>
+    </div>
+    <button class="ghost" id="topAct" onclick="openTimer()">计时器</button>
+  </div>
+
+  <!-- ═══ 今日 ═══ -->
+  <div class="view on" id="v-home"></div>
+  <!-- ═══ 打卡 ═══ -->
+  <div class="view" id="v-checkin"></div>
+  <!-- ═══ 记录 ═══ -->
+  <div class="view" id="v-log"></div>
+  <!-- ═══ 手册 ═══ -->
+  <div class="view" id="v-book"></div>
+  <!-- ═══ 更多 ═══ -->
+  <div class="view" id="v-more"></div>
+
+  <nav><div class="navin">
+    <button class="ni on" data-v="home" onclick="nav('home')"><span class="ic">🏠</span>今日</button>
+    <button class="ni" data-v="checkin" onclick="nav('checkin')"><span class="ic">⭐</span>打卡</button>
+    <button class="ni" data-v="log" onclick="nav('log')"><span class="ic">📝</span>记录</button>
+    <button class="ni" data-v="book" onclick="nav('book')"><span class="ic">📘</span>手册</button>
+    <button class="ni" data-v="more" onclick="nav('more')"><span class="ic">⚙️</span>更多</button>
+  </div></nav>
+</div>
+
+<!-- timer sheet -->
+<div class="mask" id="timerMask"><div class="sheet">
+  <div class="grab"></div><h3>作业计时器</h3>
+  <div class="timer-num" id="tNum">25:00</div>
+  <div class="timer-sub" id="tSub">先选一段时长 · 专注一段,休息一会</div>
+  <div class="chips" style="justify-content:center;margin-bottom:14px">
+    <button class="chip" onclick="tPreset(10)">10分</button>
+    <button class="chip" onclick="tPreset(15)">15分</button>
+    <button class="chip sel" id="p25" onclick="tPreset(25)">25分</button>
+    <button class="chip" onclick="tPreset(40)">40分</button>
+  </div>
+  <div class="btnrow">
+    <button class="btn plain" id="tReset" onclick="tReset()">重置</button>
+    <button class="btn" id="tToggle" onclick="tToggle()">开始专注</button>
+  </div>
+  <button class="btn plain hide" id="tDone" style="margin-top:10px" onclick="awardAfterTimer()">完成!给一个⭐</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app_data.js"></script>
+<script>
+"use strict";
+/* ═══════════ state ═══════════ */
+const KEY="adhd_app_v1";
+const todayKey=(d)=>{d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const monday=(d)=>{d=d||new Date();const x=new Date(d);const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return x};
+const weekKey=(d)=>todayKey(monday(d));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=(s)=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const wd=["一","二","三","四","五","六","日"];
+
+function seed(){
+  return {
+    v:1, seeded:true, created:Date.now(),
+    goals:[{id:uid(),name:"20分钟内开始写作业"},{id:uid(),name:"睡前自己收拾书包"}],
+    rewards:[
+      {id:uid(),name:"多读一个睡前故事",cost:10},{id:uid(),name:"和爸爸/妈妈下一盘棋",cost:15},
+      {id:uid(),name:"决定周日全家活动",cost:30},{id:uid(),name:"邀请同学来家里玩",cost:40},
+      {id:uid(),name:"兑换一个大心愿(玩具/图书)",cost:100}],
+    redemptions:[],
+    checks:{},
+    schedule:[
+      {time:"7:00",item:"起床、洗漱"},{time:"7:30",item:"早餐"},
+      {time:"16:30",item:"运动30分钟"},{time:"18:00",item:"作业时间"},
+      {time:"19:00",item:"晚餐"},{time:"20:30",item:"睡前程序(洗漱、故事)"},
+      {time:"21:00",item:"熄灯睡觉"}],
+    scheduleChecks:{},
+    behavior:[], meds:[], medLast:{drug:"",dose:""},
+    fs:1
+  };
+}
+let S;
+try{ S=JSON.parse(localStorage.getItem(KEY)) || seed(); }catch(e){ S=seed(); }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("保存失败:存储空间不足"); } }
+
+function starCount(){ let n=0; for(const w in S.checks) for(const g in S.checks[w]) for(const b of S.checks[w][g]) if(b) n++; return n; }
+function bonusStars(){ return (S.bonusStars||[]).reduce((a,b)=>a+(b.amount||0),0); }
+function spent(){ return S.redemptions.reduce((a,r)=>a+r.cost,0); }
+function balance(){ return starCount()+bonusStars()-spent(); }
+
+let toastT;
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),1800); }
+
+/* ═══════════ navigation ═══════════ */
+let cur="home", bookChapter=-1;
+const TITLES={home:["ADHD家庭助手","让每一天更可预期"],checkin:["星星打卡","好行为,看得见"],log:["快速记录","几秒钟记一笔"],
+  book:["家庭指导手册","全文随身的版本"],more:["更多","课堂要点 · 求助 · 数据"]};
+function nav(v){ cur=v; bookChapter=-1;
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));
+  document.getElementById("v-"+v).classList.add("on");
+  document.querySelectorAll("nav .ni").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.getElementById("backBtn").classList.add("hide");
+  document.getElementById("topAct").style.display = (v==="home")?"":"none";
+  render(); window.scrollTo(0,0); }
+function render(){
+  const [tt,sub]=TITLES[cur]; document.getElementById("tt").textContent=tt; document.getElementById("sub").textContent=sub;
+  if(cur==="home") renderHome(); else if(cur==="checkin") renderCheckin(); else if(cur==="log") renderLog();
+  else if(cur==="book") renderBook(); else renderMore();
+}
+
+/* ═══════════ 今日 ═══════════ */
+function renderHome(){
+  const tk=weekKey(), dk=todayKey(), dow=(new Date().getDay()+6)%7;
+  const bal=balance();
+  const goals=S.goals.filter(g=>!g.archived);
+  const doneToday=goals.filter(g=>((S.checks[tk]||{})[g.id]||[])[dow]).length;
+  const sc=S.scheduleChecks[dk]||[];
+  const sDone=sc.filter(Boolean).length, sTot=S.schedule.length;
+  let h=`<div class="balance"><div class="num">${bal}<small>颗星</small></div><div class="lbl">当前可用星星</div>
+    <div class="split"><div><b>${starCount()}</b>目标打卡</div><div><b>${bonusStars()}</b>游戏奖励</div><div><b>${spent()}</b>已兑换</div><div><b>${doneToday}/${goals.length}</b>今日目标</div></div></div>`;
+  h+=`<div class="card"><h3>今日目标 <span class="more" onclick="nav('checkin')">去打卡 ›</span></h3>`;
+  if(!goals.length) h+=`<div class="empty">还没有目标,去"打卡"里添加一个吧</div>`;
+  goals.forEach(g=>{ const on=(((S.checks[tk]||{})[g.id]||[])[dow]);
+    h+=`<div class="row"><div class="grow"><div class="t1">${esc(g.name)}</div></div>
+      <button class="star ${on?"on":""} today" onclick="toggleStar('${g.id}',${dow},'${tk}')">★</button></div>`; });
+  h+=`</div>`;
+  const next=S.schedule.findIndex((x,i)=>!sc[i]);
+  h+=`<div class="card"><h3>今日作息 <span class="more" onclick="nav('checkin');setTimeout(editSchedule,50)">编辑 ›</span></h3>`;
+  S.schedule.forEach((x,i)=>{ const on=!!sc[i];
+    h+=`<div class="srow"><span class="tm">${esc(x.time)}</span><span class="it ${on?"done":""}">${esc(x.item)}</span>
+      <button class="ck ${on?"on":""}" onclick="toggleSched(${i})">✓</button></div>`; });
+  h+=`<div class="prog"><i style="width:${sTot?Math.round(sDone/sTot*100):0}%"></i></div>
+    <div class="small muted" style="margin-top:6px">完成 ${sDone}/${sTot}${next>=0?" · 下一项:"+esc(S.schedule[next].time+" "+S.schedule[next].item):" · 今天全部完成,了不起!"}</div></div>`;
+  h+=`<div class="btnrow"><button class="btn plain" onclick="nav('log')">📝 记一笔</button>
+    <button class="btn" onclick="openTimer()">⏱ 开始专注</button></div>`;
+  document.getElementById("v-home").innerHTML=h;
+}
+function toggleSched(i){ const dk=todayKey(); const a=S.scheduleChecks[dk]||(S.scheduleChecks[dk]=S.schedule.map(()=>false));
+  a[i]=!a[i]; save(); renderHome(); }
+function toggleStar(gid,dow,wk){
+  const w=S.checks[wk]||(S.checks[wk]={}); const a=w[gid]||(w[gid]=[false,false,false,false,false,false,false]);
+  a[dow]=!a[dow]; save();
+  toast(a[dow]?"⭐ +1,马上具体地表扬孩子!":"已取消");
+  render();
+}
+function awardAfterTimer(){ tReset(); closeTimer(); nav("checkin"); toast("选一个目标,给孩子点亮今天的星"); }
+
+/* ═══════════ 打卡 ═══════════ */
+let viewWeek;
+function renderCheckin(){
+  if(!viewWeek) viewWeek=weekKey();
+  const goals=S.goals.filter(g=>!g.archived);
+  const w=S.checks[viewWeek]||{};
+  const prev=new Date(monday(new Date(viewWeek))); prev.setDate(prev.getDate()-7);
+  const next=new Date(monday(new Date(viewWeek))); next.setDate(next.getDate()+7);
+  const isCur=viewWeek===weekKey();
+  let h=`<div class="weeknav"><button onclick="shiftWeek(-1)">‹</button><span class="wk">${viewWeek} 那一周</span>
+    <button onclick="shiftWeek(1)" ${isCur?'disabled style="opacity:.35"':""}>›</button></div>`;
+  h+=`<div class="card"><table class="grid"><tr><th style="text-align:left">目标</th>${wd.map((d,i)=>{
+      const dt=new Date(monday(new Date(viewWeek))); dt.setDate(dt.getDate()+i);
+      return `<th>${d}</th>`;}).join("")}<th>周</th></tr>`;
+  goals.forEach(g=>{ const arr=w[g.id]||[false,false,false,false,false,false,false];
+    const sum=arr.filter(Boolean).length;
+    h+=`<tr><td class="gname">${esc(g.name)}</td>${arr.map((b,i)=>{
+      const dt=new Date(monday(new Date(viewWeek))); dt.setDate(dt.getDate()+i);
+      const fut=dt>new Date();
+      return `<td><button class="star ${b?"on":""} ${isCur&&todayKey(dt)===todayKey()?"today":""}"
+        ${fut?'disabled style="opacity:.35"':""} onclick="toggleStar('${g.id}',${i},'${viewWeek}')">★</button></td>`;}).join("")}
+      <td class="sum">${sum}</td></tr>`;
+  });
+  if(!goals.length) h+=`<tr><td colspan="9"><div class="empty">添加第一个目标:小而具体,孩子够得着</div></td></tr>`;
+  const total=goals.reduce((a,g)=>{const arr=w[g.id]||[];return a+arr.filter(Boolean).length},0);
+  h+=`<tr class="total"><td class="gname">本周合计</td><td colspan="7"></td><td class="sum">${total}</td></tr></table>
+    <div class="small muted" style="margin-top:8px">规则:每达成一次点亮一颗星,当天就肯定孩子;星星自动攒进积分,可兑换奖励。</div></div>`;
+  h+=`<div class="card"><h3>目标管理</h3>`;
+  S.goals.forEach(g=>{ h+=`<div class="row"><div class="grow"><div class="t1" style="${g.archived?"color:#A9B5AF;text-decoration:line-through":""}">${esc(g.name)}</div>
+      ${g.archived?'<div class="t2">已归档</div>':""}</div>
+      <button class="del" onclick="archiveGoal('${g.id}')">${g.archived?"删除":"归档"}</button></div>`; });
+  h+=`<div class="addgoal"><input id="newGoal" placeholder="新目标,如:放学后先运动30分钟" maxlength="30">
+    <button class="btn sm" onclick="addGoal()">添加</button></div>
+    <div class="small muted" style="margin-top:8px">一次只立1至3个目标;连续两周轻松达成就换新的。</div></div>`;
+  const bal=balance();
+  h+=`<div class="sec-title"><b>奖励菜单</b><span class="small">可用 ${bal} 颗星</span></div><div class="card">`;
+  S.rewards.forEach(r=>{ const ok=bal>=r.cost && !r.done;
+    h+=`<div class="rrow"><div class="grow"><div class="name ${r.done?"done":""}">${esc(r.name)}</div><div class="cost">⭐ ${r.cost}</div></div>
+      ${r.done?'<button class="btn sm plain" onclick="unredeem(\''+r.id+'\')">撤销兑换</button>'
+        :`<button class="btn sm" ${ok?"":"disabled"} onclick="redeem('${r.id}')">兑换</button>`}</div>`; });
+  h+=`<div class="addgoal"><input id="newReward" placeholder="和孩子一起商量新奖励" maxlength="30">
+    <input id="newRewardCost" type="number" min="1" placeholder="⭐" style="width:70px;flex:none">
+    <button class="btn sm" onclick="addReward()">添加</button></div></div>`;
+  if(S.redemptions.length){
+    h+=`<div class="sec-title"><b>兑换记录</b></div><div class="card">`;
+    S.redemptions.slice(-6).reverse().forEach(r=>{ const d=new Date(r.ts);
+      h+=`<div class="row"><div class="grow"><div class="t1" style="font-size:14px">${esc(r.name)}</div>
+        <div class="t2">${todayKey(d)} −${r.cost}⭐</div></div></div>`; });
+    h+=`</div>`;
+  }
+  document.getElementById("v-checkin").innerHTML=h;
+}
+function shiftWeek(n){ const d=monday(new Date(viewWeek)); d.setDate(d.getDate()+7*n); const k=todayKey(d);
+  if(k>weekKey()) return; viewWeek=k; renderCheckin(); }
+function addGoal(){ const v=document.getElementById("newGoal").value.trim(); if(!v) return;
+  S.goals.push({id:uid(),name:v}); save(); toast("目标已添加"); renderCheckin(); }
+function archiveGoal(id){ const g=S.goals.find(x=>x.id===id); if(!g) return;
+  if(g.archived){ if(confirm("彻底删除该目标及其打卡记录?")){ S.goals=S.goals.filter(x=>x.id!==id);
+      for(const w in S.checks) delete S.checks[w][id]; save(); renderCheckin(); } }
+  else { g.archived=true; save(); renderCheckin(); } }
+function addReward(){ const n=document.getElementById("newReward").value.trim();
+  const c=parseInt(document.getElementById("newRewardCost").value,10);
+  if(!n||!(c>0)){ toast("请填写奖励名称和星星数"); return; }
+  S.rewards.push({id:uid(),name:n,cost:c}); save(); toast("奖励已加入菜单"); renderCheckin(); }
+function redeem(id){ const r=S.rewards.find(x=>x.id===id); if(!r||r.done) return;
+  if(balance()<r.cost){ toast("星星还不够,继续加油"); return; }
+  r.done=true; S.redemptions.push({ts:Date.now(),id,name:r.name,cost:r.cost}); save();
+  toast("已兑换:"+r.name+" 🎉"); renderCheckin(); }
+function unredeem(id){ const r=S.rewards.find(x=>x.id===id); if(!r) return;
+  r.done=false; S.redemptions=S.redemptions.filter(x=>x.id!==id); save(); renderCheckin(); }
+
+/* ═══════════ 记录 ═══════════ */
+let logTab="behavior", bSel={scene:"",behavior:"",response:""};
+const SCENES=["作业","餐桌","睡前","起床","外出","屏幕时间","同伴玩耍"];
+const BEH_NEG=["走神发呆","离开座位","发脾气哭闹","争抢打闹","拖延顶嘴","打断插话"];
+const BEH_POS=["顺利完成","主动收拾","安静等待","自己开始学习","遵守约定"];
+const RESP=["表扬+⭐","提醒后完成","忽略冷静","平静制止","协商解决","批评"];
+function renderLog(){
+  let h=`<div class="chips" style="margin-bottom:12px">
+    <button class="chip ${logTab==="behavior"?"sel":""}" onclick="logTab='behavior';renderLog()">行为记录</button>
+    <button class="chip ${logTab==="med"?"sel":""}" onclick="logTab='med';renderLog()">用药记录</button></div>`;
+  if(logTab==="behavior"){
+    h+=`<div class="card"><h3>10秒记一笔</h3>
+      <div class="field"><label>场景</label><div class="chips">${SCENES.map(s=>
+        `<button class="chip ${bSel.scene===s?"sel":""}" onclick="pickB('scene','${s}')">${s}</button>`).join("")}</div></div>
+      <div class="field"><label>行为(红色为待改善,绿色为做得好——都值得记录)</label><div class="chips">
+        ${BEH_NEG.map(s=>`<button class="chip ${bSel.behavior===s?"sel neg":""}" onclick="pickB('behavior','${s}')">${s}</button>`).join("")}
+        ${BEH_POS.map(s=>`<button class="chip ${bSel.behavior===s?"sel pos":""}" onclick="pickB('behavior','${s}')" style="${bSel.behavior===s?"":"background:#E8F5E9;color:#1B7D46"}">${s}</button>`).join("")}</div></div>
+      <div class="field"><label>大人如何回应</label><div class="chips">${RESP.map(s=>
+        `<button class="chip ${bSel.response===s?"sel":""}" onclick="pickB('response','${s}')">${s}</button>`).join("")}</div></div>
+      <div class="field"><label>补充(可不填):前因/细节</label><input id="bNote" maxlength="80" value="${esc(bSel.note||"")}" oninput="bSel.note=this.value" placeholder="如:连续写对5题后遇到应用题"></div>
+      <button class="btn" onclick="saveBehavior()">保存记录</button>
+      <div class="small muted" style="margin-top:8px">只写具体事实,不写评价;连续记录1至2周,复诊时给医生看。</div></div>`;
+    h+=behaviorList();
+  } else {
+    h+=`<div class="card"><h3>今日用药</h3>
+      <div class="frow"><div class="field"><label>药名/剂量(按医嘱)</label><input id="mDrug" value="${esc(S.medLast.drug||"")}" placeholder="遵医嘱填写"></div>
+      <div class="field" style="max-width:110px"><label>时间</label><input id="mTime" type="time" value="07:30"></div></div>
+      <div class="field"><label>食欲</label><div class="chips" id="mApp">${["好","一般","差"].map((a,i)=>
+        `<button class="chip ${i===1?"sel":""}" onclick="selOne(this)">${a}</button>`).join("")}</div></div>
+      <div class="field"><label>观察(睡眠/情绪/不适,可不填)</label><input id="mNote" maxlength="60" placeholder="如:入睡22:30,一觉到天亮"></div>
+      <button class="btn" onclick="saveMed()">保存今日记录</button>
+      <div class="small muted" style="margin-top:8px">仅供复诊反馈;明显不适请及时联系医生,勿自行停药。</div></div>`;
+    if(!S.meds.length) h+=`<div class="card"><div class="empty">还没有用药记录</div></div>`;
+    else { h+=`<div class="card">`;
+      const byDate={}; S.meds.forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m)});
+      Object.keys(byDate).sort().reverse().forEach(d=>{
+        h+=`<div class="small muted" style="margin:8px 2px 2px">${d}</div>`;
+        byDate[d].forEach(m=>{ h+=`<div class="row"><div class="grow"><div class="t1" style="font-size:14px">${esc(m.drug||"(未填药名)")} <span class="muted small">${esc(m.time)}</span></div>
+          <div class="t2">食欲:${esc(m.appetite)}${m.note?" · "+esc(m.note):""}</div></div>
+          <button class="del" onclick="delMed('${m.id}')">删除</button></div>`; }); });
+      h+=`</div>`;
+    }
+  }
+  document.getElementById("v-log").innerHTML=h;
+}
+function pickB(k,v){ bSel[k]=bSel[k]===v?"":v; renderLog(); }
+function selOne(btn){ [...btn.parentElement.children].forEach(c=>c.classList.remove("sel")); btn.classList.add("sel"); }
+function saveBehavior(){
+  if(!bSel.behavior){ toast("先选一个行为"); return; }
+  const note=bSel.note||(document.getElementById("bNote")||{}).value||"";
+  S.behavior.push({id:uid(),ts:Date.now(),scene:bSel.scene,behavior:bSel.behavior,response:bSel.response,note});
+  save(); bSel={scene:"",behavior:"",response:""}; toast("已记录 ✓"); renderLog();
+}
+function behaviorList(){
+  if(!S.behavior.length) return `<div class="card"><div class="empty">还没有记录 · 好行为也值得记下来</div></div>`;
+  const byDate={}; S.behavior.forEach(b=>{ const d=todayKey(new Date(b.ts)); (byDate[d]=byDate[d]||[]).push(b); });
+  let h=`<div class="sec-title"><b>历史记录</b><span class="small">${S.behavior.length} 条</span></div><div class="card">`;
+  Object.keys(byDate).sort().reverse().slice(0,7).forEach(d=>{
+    h+=`<div class="small muted" style="margin:8px 2px 2px">${d}</div>`;
+    byDate[d].slice().reverse().forEach(b=>{ const tm=new Date(b.ts); const neg=BEH_NEG.includes(b.behavior);
+      h+=`<div class="row"><div class="grow"><div class="t1" style="font-size:14.5px">
+        <span class="tag ${neg?"neg":"pos"}">${esc(b.behavior)}</span>${esc(b.scene||"")}</div>
+        <div class="t2">${String(tm.getHours()).padStart(2,"0")}:${String(tm.getMinutes()).padStart(2,"0")}${b.response?" · 回应:"+esc(b.response):""}${b.note?" · "+esc(b.note):""}</div></div>
+        <button class="del" onclick="delBehavior('${b.id}')">删除</button></div>`; }); });
+  return h+`</div>`;
+}
+function delBehavior(id){ S.behavior=S.behavior.filter(b=>b.id!==id); save(); renderLog(); }
+function saveMed(){
+  const drug=document.getElementById("mDrug").value.trim(), time=document.getElementById("mTime").value||"";
+  const appEl=document.querySelector("#mApp .sel"); const app=appEl?appEl.textContent:"一般";
+  const note=document.getElementById("mNote").value.trim();
+  S.meds.push({id:uid(),date:todayKey(),time,drug,appetite:app,note});
+  S.medLast={drug}; save(); toast("已记录 ✓"); renderLog();
+}
+function delMed(id){ S.meds=S.meds.filter(m=>m.id!==id); save(); renderLog(); }
+function editSchedule(){ /* via checkin view: simple prompt-based editor */
+  const cur=S.schedule.map(x=>x.time+" "+x.item).join("\n");
+  const v=prompt("每行一项,格式:时间 内容(例:18:00 作业时间)", cur);
+  if(v===null) return;
+  S.schedule=v.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{
+    const m=l.match(/^(\d{1,2}[:：]\d{2})\s*(.+)$/); return m?{time:m[1].replace("：",":"),item:m[2]}:{time:"",item:l}; });
+  save(); render();
+}
+
+/* ═══════════ 手册 ═══════════ */
+function chapters(){ const ch=[]; HANDBOOK.forEach((b,i)=>{ if(b.t==="h1") ch.push({title:b.x,start:i}); });
+  ch.forEach((c,i)=>c.end=i<ch.length-1?ch[i+1].start:HANDBOOK.length); return ch; }
+function renderBook(){
+  const el=document.getElementById("v-book");
+  if(bookChapter<0){
+    const chs=chapters();
+    let h=`<div class="card chlist">`;
+    chs.forEach((c,i)=>{ const n=HANDBOOK.slice(c.start,c.end).length;
+      h+=`<div class="row" onclick="openChapter(${i})"><div class="num">${i+1}</div>
+        <div class="grow"><div class="t1">${esc(c.title)}</div><div class="t2">${n} 个段落</div></div>
+        <div class="muted">›</div></div>`; });
+    h+=`<div class="small muted" style="margin-top:10px">全文来自《ADHD儿童家庭指导手册》· 健康教育资料,不能替代医生面诊。</div></div>`;
+    el.innerHTML=h;
+  } else {
+    document.getElementById("backBtn").classList.remove("hide");
+    const ch=chapters()[bookChapter];
+    let h=`<div class="card" style="padding:14px 12px 6px"><div class="fontctl">字号
+      <button onclick="setFont(0.9)">A−</button><button onclick="setFont(1.15)">A+</button>
+      <span style="flex:1"></span><span onclick="bookChapter=-1;renderBook()" style="color:var(--primary)">目录</span></div></div>
+      <div class="card reader" style="--fs:${S.fs||1}">`;
+    HANDBOOK.slice(ch.start,ch.end).forEach(b=>{
+      if(b.t==="h1") h+=`<div class="h1">${esc(b.x)}</div>`;
+      else if(b.t==="h2") h+=`<h2>${esc(b.x)}</h2>`;
+      else if(b.t==="tip") h+=`<div class="tip"><b>${esc(b.title||"温馨提示")}</b>${esc(b.x)}</div>`;
+      else if(b.t==="table"){ h+=`<table>`; b.rows.forEach((r,ri)=>{
+          h+=`<tr>${r.map(c=>`<${ri===0?"th":"td"}>${esc(c)}</${ri===0?"th":"td"}>`).join("")}</tr>`; });
+        h+=`</table>`; }
+      else h+=`<p>${esc(b.x)}</p>`;
+    });
+    h+=`</div><button class="btn plain" style="margin-top:2px" onclick="bookChapter=${bookChapter<chapters().length-1?bookChapter+1:bookChapter};renderBook();window.scrollTo(0,0)">${bookChapter<chapters().length-1?"下一章 ›":"已是最后一章"}</button>`;
+    el.innerHTML=h;
+  }
+}
+function openChapter(i){ bookChapter=i; document.getElementById("backBtn").classList.remove("hide"); renderBook(); window.scrollTo(0,0); }
+function setFont(v){ S.fs=v; save(); renderBook(); }
+function goBack(){ if(cur==="book"&&bookChapter>=0){ bookChapter=-1; document.getElementById("backBtn").classList.add("hide"); renderBook(); } else nav("home"); }
+
+/* ═══════════ 更多 ═══════════ */
+function renderMore(){
+  let h=`<div class="hot"><div class="h1">心理援助热线(全国统一)</div><div class="num">12356</div>
+    <div class="d">24小时 · 家长情绪濒临崩溃时也可以拨打 · 紧急情况拨打 120 / 110</div></div>`;
+  h+=`<div class="card"><h3>这些信号,请尽快求助</h3><div class="small" style="line-height:1.9">
+    · 孩子情绪持续低落、兴趣减退超过两周<br>· 出现自伤行为,或谈论死亡、想消失<br>
+    · 频繁严重攻击行为<br>· 拒绝上学持续一周以上<br>· 家长自身明显抑郁、焦虑或失控</div></div>`;
+  h+=`<div class="sec-title"><b>家长课堂 · 18页要点</b></div><div class="card">`;
+  CLASSROOM.forEach((lines,i)=>{ if(i===0) return;
+    h+=`<div class="slide"><div class="sn">第 ${i+1} 页</div><div class="st">${esc(lines[0]||"")}</div>`+
+      lines.slice(1).map(l=>`<div class="sl">${esc(l)}</div>`).join("")+`</div>`; });
+  h+=`</div>`;
+  h+=`<div class="sec-title"><b>数据</b></div><div class="card">
+    <div class="small muted" style="margin-bottom:10px">所有数据只保存在这台设备的浏览器里,不会上传。换手机前请先导出备份。</div>
+    <div class="btnrow"><button class="btn plain" onclick="exportData()">导出备份</button>
+    <label class="btn plain" style="text-align:center">导入备份<input type="file" accept=".json" style="display:none" onchange="importData(this)"></label></div>
+    <button class="btn" style="background:#C0392B;margin-top:10px" onclick="resetAll()">清空全部数据</button></div>`;
+  h+=`<div class="card"><h3>关于</h3><div class="small muted" style="line-height:1.8">
+    ADHD家庭助手 · 配套《ADHD儿童家庭指导手册》《家庭实用工具包》《ADHD家长课堂》使用。<br><br>
+    安装到手机:<b style="color:var(--text)">iPhone</b> 用 Safari 打开本页 → 分享 → 添加到主屏幕;<b style="color:var(--text)">Android</b> 用 Chrome 打开 → 菜单 → 添加到主屏幕。<br><br>
+    本应用为健康教育与家庭管理工具,不能替代执业医师的诊疗意见;诊断与用药请遵从专业医生。</div></div>`;
+  document.getElementById("v-more").innerHTML=h;
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="ADHD家庭助手备份_"+todayKey()+".json"; a.click(); URL.revokeObjectURL(a.href); toast("已导出备份文件");
+}
+function importData(input){
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const d=JSON.parse(r.result);
+      if(!d||d.v!==1||!("goals" in d)) throw 0;
+      if(!confirm("导入将覆盖当前数据,继续?")) return;
+      S=d; save(); toast("导入成功"); nav("home");
+    }catch(e){ toast("文件格式不对,导入失败"); } };
+  r.readAsText(f); input.value="";
+}
+function resetAll(){ if(confirm("确定清空全部数据?此操作不可恢复(建议先导出备份)")&&confirm("再次确认:清空全部数据?")){ S=seed(); save(); nav("home"); toast("已清空"); } }
+
+/* ═══════════ timer ═══════════ */
+let tDur=25*60, tLeft=25*60, tRun=null;
+function fmt(s){ return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); }
+function tDraw(){ document.getElementById("tNum").textContent=fmt(tLeft);
+  document.getElementById("tSub").textContent=tRun?"专注中 · 中途尽量不打扰孩子":(tLeft===tDur?"先选一段时长 · 专注一段,休息一会":"已暂停"); }
+function tPreset(m){ if(tRun) return; tDur=m*60; tLeft=tDur; tDraw();
+  ["p25"].forEach(id=>document.getElementById(id)&&document.getElementById(id).classList.remove("sel"));
+  document.querySelectorAll(".mask .chip").forEach(c=>{ if(c.textContent===m+"分") c.classList.add("sel"); }); }
+function tToggle(){ const btn=document.getElementById("tToggle");
+  if(tRun){ clearInterval(tRun); tRun=null; btn.textContent="继续"; tDraw(); return; }
+  if(tLeft<=0) tLeft=tDur;
+  btn.textContent="暂停";
+  tRun=setInterval(()=>{ tLeft--; if(tLeft<=0){ clearInterval(tRun); tRun=null;
+      btn.textContent="开始专注"; document.getElementById("tDone").classList.remove("hide");
+      document.getElementById("tSub").textContent="这段专注完成啦!";
+      try{ navigator.vibrate&&navigator.vibrate([200,100,200]); }catch(e){}
+      beep(); tLeft=0; }
+    tDraw(); },1000); tDraw(); }
+function tReset(){ if(tRun){clearInterval(tRun);tRun=null;} tLeft=tDur; document.getElementById("tToggle").textContent="开始专注";
+  document.getElementById("tDone").classList.add("hide"); tDraw(); }
+function beep(){ try{ const c=new (window.AudioContext||window.webkitAudioContext)(); const o=c.createOscillator(),g=c.createGain();
+  o.connect(g); g.connect(c.destination); o.frequency.value=880; g.gain.setValueAtTime(.2,c.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.8); o.start(); o.stop(c.currentTime+.8); }catch(e){} }
+function openTimer(){ document.getElementById("timerMask").classList.add("on"); }
+function closeTimer(){ document.getElementById("timerMask").classList.remove("on"); }
+document.getElementById("timerMask").addEventListener("click",e=>{ if(e.target.id==="timerMask") closeTimer(); });
+
+/* ═══════════ PWA ═══════════ */
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+
+nav("home");
+</script>
+</body>
+</html>

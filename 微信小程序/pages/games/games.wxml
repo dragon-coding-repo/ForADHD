@@ -1,0 +1,55 @@
+<view class="starrail">
+  <view class="big">⭐ {{stars}}</view>
+  <view class="railtxt">
+    <view class="lbl">累计赢得星星(已领到家庭助手 {{claimed}})</view>
+    <view class="lbl">每次限时 {{sessionMin}} 分钟,到点自动带娃平静收工</view>
+  </view>
+</view>
+
+<button class="gcard" hover-class="gcard-hover" hover-stay-time="80" data-mode="light" bindtap="play">
+  <view class="gic gic-green">🚦</view>
+  <view class="grow">
+    <view class="gt1">红绿灯</view>
+    <view class="gt2">水果出现快点它,辣椒出现忍住别动</view>
+    <text class="skill">练:停下来 · 抑制冲动</text>
+  </view>
+</button>
+<button class="gcard" hover-class="gcard-hover" hover-stay-time="80" data-mode="simon" bindtap="play">
+  <view class="gic gic-gold">✨</view>
+  <view class="grow">
+    <view class="gt1">星星复现</view>
+    <view class="gt2">星星按顺序亮,你能照原样点回来吗</view>
+    <text class="skill">练:记住 · 工作记忆</text>
+  </view>
+</button>
+<button class="gcard" hover-class="gcard-hover" hover-stay-time="80" data-mode="stroop" bindtap="play">
+  <view class="gic gic-orange">🐘</view>
+  <view class="grow">
+    <view class="gt1">大小擂台</view>
+    <view class="gt2">和动物擂主对打,规则会突然变!</view>
+    <text class="skill">练:变通 · 灵活切换</text>
+  </view>
+</button>
+
+<view class="card">
+  <view class="card-title">设置</view>
+  <view class="small muted" style="margin-bottom:10rpx">孩子年龄(决定难度)</view>
+  <view class="chips" style="margin-bottom:20rpx">
+    <button class="chip {{age === item ? 'sel' : ''}}" wx:for="{{ages}}" wx:key="*this" data-a="{{item}}" bindtap="setAge">{{item}}岁</button>
+  </view>
+  <view class="small muted" style="margin-bottom:10rpx">每次时长(到点自动结束)</view>
+  <view class="chips">
+    <button class="chip {{sessionMin === item ? 'sel' : ''}}" wx:for="{{mins}}" wx:key="*this" data-m="{{item}}" bindtap="setMin">{{item}}分钟</button>
+  </view>
+</view>
+
+<view class="card">
+  <view class="card-title">家长园地 <text class="card-more" bindtap="goParent">怎么看数据 ›</text></view>
+  <view class="howto"><text class="howto-b">怎么用最好:</text>每次1局左右、和家长一起玩;结束后夸具体行为("你刚才忍住没点辣椒,真棒");把练习里的"停下来"接到写作业上,并在家庭助手里给对应目标加星。</view>
+  <view wx:if="{{recent.length}}" style="margin-top:16rpx">
+    <view class="hist" wx:for="{{recent}}" wx:key="id">
+      <text>{{item.date}} · {{item.name}} · {{item.rounds}}轮</text>
+      <text>{{item.mood}}</text>
+    </view>
+  </view>
+</view>

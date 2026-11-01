@@ -1,0 +1,35 @@
+<view class="hotcard">
+  <view class="h1">心理援助热线(全国统一)</view>
+  <view class="hnum" bindtap="callHotline">12356</view>
+  <view class="hd">24小时 · 家长情绪濒临崩溃时也可以拨打 · 点号码直接拨打 · 紧急情况 120 / 110</view>
+</view>
+
+<view class="card">
+  <view class="card-title">设置</view>
+  <view class="rowitem">
+    <view class="grow"><view class="t1">练习音效</view><view class="t2">关闭后练习只用震动反馈</view></view>
+    <button class="btn plain sm" bindtap="toggleMute">{{muted ? "已静音,点此开启" : "已开启,点此静音"}}</button>
+  </view>
+  <view class="rowitem">
+    <view class="grow"><view class="t1">家长园地</view><view class="t2">练习数据 · 课堂要点 · 求助信号</view></view>
+    <button class="btn plain sm" bindtap="goParent">进入</button>
+  </view>
+</view>
+
+<view class="card">
+  <view class="card-title">数据与隐私</view>
+  <view class="small muted" style="line-height:1.9">
+    · 所有数据只保存在这台手机的微信里,不会上传到任何服务器\n
+    · 星星与打卡数据存在本机;删除小程序会清空数据,请谨慎\n
+    · 练习领星需家长长按确认,防止孩子自己刷星
+  </view>
+  <button class="btn" style="background:#C0392B;margin-top:24rpx" bindtap="resetAll">清空全部数据</button>
+</view>
+
+<view class="card">
+  <view class="card-title">关于</view>
+  <view class="small muted" style="line-height:1.9">
+    ADHD家庭助手 · 小程序版。配套内容:《ADHD儿童家庭指导手册》《家庭实用工具包》《ADHD家长课堂》。\n\n
+    声明:本工具为健康教育与家庭管理用途,不能替代执业医师的诊疗意见;孩子的诊断、用药与治疗方案,请遵从专业医生。
+  </view>
+</view>

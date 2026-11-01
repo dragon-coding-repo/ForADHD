@@ -1,0 +1,93 @@
+<view class="card" style="padding:24rpx 32rpx">
+  <view class="chips">
+    <button class="chip {{tab === 'behavior' ? 'sel' : ''}}" data-tab="behavior" bindtap="setTab">行为记录</button>
+    <button class="chip {{tab === 'med' ? 'sel' : ''}}" data-tab="med" bindtap="setTab">用药记录</button>
+  </view>
+</view>
+
+<!-- 行为记录 -->
+<block wx:if="{{tab === 'behavior'}}">
+  <view class="card">
+    <view class="card-title">10秒记一笔</view>
+    <view class="field">
+      <text class="field-label">场景</text>
+      <view class="chips">
+        <button class="chip {{sel.scene === item ? 'sel' : ''}}" wx:for="{{scenes}}" wx:key="*this" data-group="scene" data-val="{{item}}" bindtap="onChip">{{item}}</button>
+      </view>
+    </view>
+    <view class="field">
+      <text class="field-label">行为(红色为待改善,绿色为做得好——都值得记录)</text>
+      <view class="chips">
+        <button class="chip {{sel.behavior === item ? 'sel neg' : ''}}" wx:for="{{behNeg}}" wx:key="*this" data-group="behavior" data-val="{{item}}" bindtap="onChip">{{item}}</button>
+        <button class="chip {{sel.behavior === item ? 'sel pos' : 'pos'}}" wx:for="{{behPos}}" wx:key="*this" data-group="behavior" data-val="{{item}}" bindtap="onChip">{{item}}</button>
+      </view>
+    </view>
+    <view class="field">
+      <text class="field-label">大人如何回应</text>
+      <view class="chips">
+        <button class="chip {{sel.response === item ? 'sel' : ''}}" wx:for="{{resp}}" wx:key="*this" data-group="response" data-val="{{item}}" bindtap="onChip">{{item}}</button>
+      </view>
+    </view>
+    <view class="field">
+      <text class="field-label">补充(可不填):前因/细节</text>
+      <input class="input" value="{{note}}" maxlength="80" placeholder="如:连续写对5题后遇到应用题" bindinput="onNote" />
+    </view>
+    <button class="btn" bindtap="saveBehavior">保存记录</button>
+    <view class="small muted" style="margin-top:16rpx">只写具体事实,不写评价;连续记录1至2周,复诊时给医生看。</view>
+  </view>
+
+  <view wx:if="{{!behHistory.length}}" class="card"><view class="empty">还没有记录 · 好行为也值得记下来</view></view>
+  <view class="card" wx:for="{{behHistory}}" wx:for-item="day" wx:key="date">
+    <view class="small muted" style="margin-bottom:8rpx">{{day.date}}</view>
+    <view class="rowitem" wx:for="{{day.items}}" wx:key="id">
+      <view class="grow">
+        <view class="t1" style="font-size:29rpx">
+          <text class="tag {{item.neg ? 'neg' : 'pos'}}">{{item.behavior}}</text>{{item.scene}}
+        </view>
+        <view class="t2">{{item.time}}{{item.response ? " · 回应:" + item.response : ""}}{{item.note ? " · " + item.note : ""}}</view>
+      </view>
+      <button class="del" data-id="{{item.id}}" bindtap="delBehavior">删除</button>
+    </view>
+  </view>
+</block>
+
+<!-- 用药记录 -->
+<block wx:if="{{tab === 'med'}}">
+  <view class="card">
+    <view class="card-title">今日用药</view>
+    <view class="field">
+      <text class="field-label">药名/剂量(按医嘱)</text>
+      <input class="input" value="{{mDrug}}" placeholder="遵医嘱填写" bindinput="onDrug" />
+    </view>
+    <view class="field">
+      <text class="field-label">服药时间</text>
+      <picker mode="time" value="{{mTime}}" bindchange="onTime">
+        <view class="input">{{mTime}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <text class="field-label">食欲</text>
+      <view class="chips">
+        <button class="chip {{mAppetite === item ? 'sel' : ''}}" wx:for="{{['好','一般','差']}}" wx:key="*this" data-v="{{item}}" bindtap="onApp">{{item}}</button>
+      </view>
+    </view>
+    <view class="field">
+      <text class="field-label">观察(睡眠/情绪/不适,可不填)</text>
+      <input class="input" value="{{mNote}}" maxlength="60" placeholder="如:入睡22:30,一觉到天亮" bindinput="onMedNote" />
+    </view>
+    <button class="btn" bindtap="saveMed">保存今日记录</button>
+    <view class="small muted" style="margin-top:16rpx">仅供复诊反馈;明显不适请及时联系医生,勿自行停药。</view>
+  </view>
+
+  <view wx:if="{{!meds.length}}" class="card"><view class="empty">还没有用药记录</view></view>
+  <view class="card" wx:for="{{meds}}" wx:for-item="day" wx:key="date">
+    <view class="small muted" style="margin-bottom:8rpx">{{day.date}}</view>
+    <view class="rowitem" wx:for="{{day.items}}" wx:key="id">
+      <view class="grow">
+        <view class="t1" style="font-size:28rpx">{{item.drug}} <text class="muted small">{{item.time2}}</text></view>
+        <view class="t2">食欲:{{item.appetite}}{{item.note ? " · " + item.note : ""}}</view>
+      </view>
+      <button class="del" data-id="{{item.id}}" bindtap="delMed">删除</button>
+    </view>
+  </view>
+</block>

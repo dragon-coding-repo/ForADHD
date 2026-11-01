@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0E332E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="专注力游戏">
+<title>专注力小游戏 · ADHD家庭助手</title>
+<style>
+:root{
+  --dark:#0E332E; --primary:#177E6A; --primary-deep:#11594B; --tint:#E7F3EF;
+  --accent:#E8663C; --accent-tint:#FBE9E2; --text:#22312C; --muted:#68766F;
+  --line:#E3E9E6; --bg:#F4F7F6; --gold:#FFD66B;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;padding:0;overscroll-behavior:none}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:var(--bg);
+  color:var(--text);font-size:16px;line-height:1.55;padding-bottom:24px}
+#wrap{max-width:520px;margin:0 auto;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:20;background:var(--dark);color:#fff;
+  padding:calc(env(safe-area-inset-top) + 13px) 16px 13px;display:flex;align-items:center;justify-content:space-between}
+.topbar .tt{font-size:18px;font-weight:700}
+.topbar .sub{font-size:11.5px;color:#8FBDB2}
+.topbar .btns{display:flex;gap:8px}
+.topbar button{background:rgba(255,255,255,.12);color:#fff;border-radius:18px;padding:6px 12px;font-size:12.5px;border:none}
+.view{padding:14px 14px 10px;display:none}
+.view.on{display:block}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(20,50,44,.06)}
+h3{font-size:16px;margin:0 0 10px}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+.center{text-align:center}
+.btn{background:var(--primary);color:#fff;border-radius:12px;padding:12px 16px;font-size:15.5px;font-weight:700;width:100%;border:none}
+.btn.acc{background:var(--accent)}
+.btn.plain{background:var(--tint);color:var(--primary)}
+.btn:disabled{opacity:.45}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#fff;border:1.5px solid var(--line);color:var(--text);border-radius:18px;padding:7px 14px;font-size:13.5px;border-width:1.5px;border-style:solid}
+.chip.sel{background:var(--tint);border-color:var(--primary);color:var(--primary);font-weight:700}
+
+/* hub */
+.starrail{background:linear-gradient(135deg,var(--dark),var(--primary-deep));color:#fff;border-radius:18px;padding:16px 18px;
+  margin-bottom:14px;display:flex;align-items:center;gap:14px}
+.starrail .big{font-size:34px;font-weight:800;line-height:1}
+.starrail .lbl{font-size:12.5px;color:#9DC9BE}
+.gcard{display:flex;align-items:center;gap:14px;background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:0 1px 4px rgba(20,50,44,.06);border:none;width:100%;text-align:left}
+.gcard .ic{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:27px;flex:none}
+.gcard .t1{font-size:16.5px;font-weight:800}
+.gcard .t2{font-size:12.5px;color:var(--muted);margin-top:2px}
+.gcard .skill{font-size:11px;background:var(--tint);color:var(--primary);border-radius:6px;padding:2px 7px;display:inline-block;margin-top:5px;font-weight:700}
+
+/* game stage */
+.stage{background:#fff;border-radius:20px;min-height:340px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.gname{font-size:13px;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between;width:100%}
+.prompt{font-size:17px;font-weight:700;text-align:center;min-height:26px}
+.prompt .ruleflip{color:var(--accent)}
+.bigcard{width:150px;height:150px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:64px;margin:18px 0;box-shadow:0 3px 10px rgba(20,50,44,.12);transition:transform .12s;cursor:pointer;touch-action:manipulation}
+.bigcard.good{background:#E8F5E9}
+.bigcard.bad{background:var(--accent-tint)}
+.bigcard.gold{background:#FFF4D6}
+@keyframes hitpop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+.bigcard.hitpop{animation:hitpop .3s ease}
+@keyframes ringflash{from{box-shadow:0 0 0 0 rgba(23,126,106,.5)}to{box-shadow:0 0 0 24px rgba(23,126,106,0)}}
+@keyframes ringflashB{from{box-shadow:0 0 0 0 rgba(232,102,60,.5)}to{box-shadow:0 0 0 24px rgba(232,102,60,0)}}
+.bigcard.flash-good{animation:hitpop .3s ease,ringflash .45s ease-out;background:#CBEFDD!important}
+.bigcard.flash-bad{animation:hitpop .3s ease,ringflashB .45s ease-out;background:#F8CDBD!important}
+@keyframes flyup{from{opacity:1;transform:translate(-50%,0) scale(1)}to{opacity:0;transform:translate(-50%,-52px) scale(1.45)}}
+.fly{position:absolute;left:50%;top:34%;transform:translateX(-50%);font-size:30px;font-weight:800;
+  color:var(--primary);animation:flyup .65s ease-out forwards;pointer-events:none;z-index:5}
+.fly.gold{color:#C8860A}.fly.no{color:var(--accent)}
+.fly.mutedfly{color:var(--muted);font-size:17px}
+.feedback{min-height:24px;font-size:15px;font-weight:800}
+.feedback.ok{color:var(--primary)} .feedback.no{color:var(--accent)}
+.tapbtns{display:flex;gap:14px;width:100%}
+.tapbtn{flex:1;border-radius:16px;padding:20px 0;font-size:24px;font-weight:800;border:none;color:#fff;transition:transform .08s}
+.tapbtn:active{transform:scale(.93)}
+.opprow{display:flex;align-items:center;gap:10px;width:100%;margin-bottom:4px}
+.oppemoji{font-size:32px}
+.hpbar{height:12px;border-radius:7px;background:#EFEFEF;overflow:hidden;margin-top:3px}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,#E8663C,#F2A03C);transition:width .35s;border-radius:7px}
+.comboline{min-height:22px;font-size:15px;font-weight:800;color:var(--accent)}
+@keyframes flipin{0%{transform:translateX(-50%) scale(.3);opacity:0}55%{transform:translateX(-50%) scale(1.15);opacity:1}100%{transform:translateX(-50%) scale(1);opacity:1}}
+@keyframes fadeout{to{opacity:0}}
+.flipbanner{position:absolute;top:15%;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;
+  font-size:20px;font-weight:800;padding:8px 22px;border-radius:14px;white-space:nowrap;z-index:8;
+  box-shadow:0 4px 14px rgba(232,102,60,.4);animation:flipin .5s ease,fadeout .35s ease .65s forwards}
+.tapbtn.a{background:var(--primary)} .tapbtn.b{background:var(--accent)}
+.statline{display:flex;gap:18px;margin-top:14px;font-size:13px;color:var(--muted)}
+.statline b{color:var(--text)}
+.timebar{height:7px;border-radius:4px;background:var(--gray,#F2F3F3);background:#EFEFEF;width:100%;margin-top:12px;overflow:hidden}
+.timebar i{display:block;height:100%;background:var(--primary);transition:width .5s linear}
+
+/* simon */
+.simon{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:300px;margin:14px 0}
+.pad{border-radius:18px;aspect-ratio:1;border:none;opacity:.55;transition:opacity .1s, transform .1s}
+.pad.lit{opacity:1;transform:scale(1.04)}
+.pad.p0{background:#4CA6D9}.pad.p1{background:#E8A13C}.pad.p2{background:#7FBF6A}.pad.p3{background:#B98BD6}
+.simonmsg{font-size:15px;font-weight:700;min-height:22px}
+
+/* breathing */
+.balloon{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8FD0C0,var(--primary));
+  margin:18px auto;transition:width 3.8s ease-in-out,height 3.8s ease-in-out;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700}
+.balloon.big{width:200px;height:200px}
+.brmsg{font-size:17px;font-weight:700;text-align:center;min-height:26px}
+.moodrow{display:flex;gap:14px;justify-content:center;margin-top:14px}
+.mood{font-size:34px;background:#fff;border:2px solid var(--line);border-radius:16px;width:64px;height:64px}
+.mood.sel{border-color:var(--primary);background:var(--tint)}
+
+/* stars + claim */
+.stars3{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.stars3 span{font-size:40px;opacity:.18;transition:opacity .3s}
+.stars3 span.on{opacity:1}
+.claim{position:relative;touch-action:none;-webkit-touch-callout:none}
+.claimring{position:absolute;inset:0;border-radius:12px;background:rgba(23,126,106,.25);width:0%;pointer-events:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:30px;background:rgba(14,51,46,.93);color:#fff;font-size:14px;
+  border-radius:22px;padding:10px 20px;z-index:80;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.howto{font-size:13px;color:var(--muted);line-height:1.8}
+.howto b{color:var(--text)}
+.ul{font-size:13.5px;color:#41504A;line-height:1.9;margin:6px 0 0;padding-left:18px}
+.backrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.backrow button{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;font-size:13.5px;color:var(--muted)}
+.hist{font-size:12.5px;color:var(--muted);padding:7px 2px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.hist:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="topbar">
+    <div><div class="tt" id="tt">专注力小游戏</div><div class="sub" id="sub">ADHD家庭助手 · 配套练习</div></div>
+    <div class="btns">
+      <button id="muteBtn" onclick="toggleMute()">🔊</button>
+      <button onclick="location.href='../'">首页</button>
+    </div>
+  </div>
+
+  <!-- ══ 大厅 ══ -->
+  <div class="view on" id="v-hub"></div>
+  <!-- ══ 游戏舞台 ══ -->
+  <div class="view" id="v-play">
+    <div class="backrow"><button onclick="endSession(true)">结束本次</button><span class="small muted" id="playInfo"></span></div>
+    <div class="stage" id="stage"></div>
+  </div>
+  <!-- ══ 结束仪式 ══ -->
+  <div class="view" id="v-end"></div>
+  <!-- ══ 家长页 ══ -->
+  <div class="view" id="v-parent"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ═══════ 存档 ═══════ */
+const GKEY="adhd_game_v1", APPKEY="adhd_app_v1";
+const todayKey=(d)=>{d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=(s)=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function load(){ try{ return JSON.parse(localStorage.getItem(GKEY))||null; }catch(e){ return null; } }
+let G = load() || { v:1, age:"7-9", sessionMin:10, muted:false, stars:0, history:[], best:{}, claimed:0 };
+function save(){ try{ localStorage.setItem(GKEY, JSON.stringify(G)); }catch(e){} }
+let toastT;
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("on");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),1700); }
+
+/* ═══════ 声音 ═══════ */
+let AC=null;
+function beep(freq,dur,type,vol){ if(G.muted) return;
+  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended")AC.resume();
+    const o=AC.createOscillator(),g=AC.createGain(); o.connect(g); g.connect(AC.destination);
+    o.type=type||"sine"; o.frequency.value=freq; g.gain.setValueAtTime(vol||.15,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+(dur||.15)); o.start(); o.stop(AC.currentTime+(dur||.15)); }catch(e){} }
+const sOK=()=>beep(880,.14), sNO=()=>beep(200,.25,"square",.08), sWIN=()=>{beep(660,.12);setTimeout(()=>beep(880,.18),110)};
+function toggleMute(){ G.muted=!G.muted; save(); document.getElementById("muteBtn").textContent=G.muted?"🔇":"🔊"; }
+
+/* ═══════ 适龄参数 ═══════ */
+function diff(){ return {
+  "4-6": {stim:1700, gap:450, simonStart:2, simonMax:5, stroopTrials:14, ruleEvery:99, sessionDef:5},
+  "7-9": {stim:1250, gap:350, simonStart:2, simonMax:7, stroopTrials:20, ruleEvery:5,  sessionDef:10},
+  "10-12":{stim:900,  gap:260, simonStart:3, simonMax:9, stroopTrials:20, ruleEvery:4,  sessionDef:10}
+}[G.age] || {"7-9":{stim:1250,gap:350,simonStart:2,simonMax:7,stroopTrials:20,ruleEvery:5,sessionDef:10}}["7-9"]; }
+
+/* ═══════ 会话 ═══════ */
+let S=null; // 当前会话
+function newSession(gameId){
+  const d=diff();
+  S={ game:gameId, rounds:0, hits:0, trials:0, stars:0, endsAt:Date.now()+G.sessionMin*60000,
+      timer:null, cleanups:[] };
+  if(gameId==="simon") G.__len=d.simonStart; // 序列长度只在会话开始时重置
+  document.getElementById("v-hub").classList.remove("on");
+  document.getElementById("v-end").classList.remove("on");
+  document.getElementById("v-play").classList.add("on");
+  startGame(gameId);
+  S.tick=setInterval(()=>{ const left=S.endsAt-Date.now();
+    const bar=document.getElementById("timefill");
+    if(bar) bar.style.width=Math.max(0,Math.min(100,left/(G.sessionMin*600)*10))+"%";
+    if(left<=0) endSession(); },1000);
+}
+function sessionLeftMin(){ return Math.max(0,Math.ceil((S.endsAt-Date.now())/60000)); }
+function roundDone(winTitle){
+  S.rounds++;
+  sWIN();
+  const st=stageEl();
+  if(timeUp()) { endSession(); return; }
+  st.innerHTML=`<div style="font-size:40px">🎉</div>
+    <div class="prompt" style="margin-top:8px">${winTitle?esc(winTitle):"第 "+S.rounds+" 轮完成!"}</div>
+    <div class="small muted" style="margin-top:6px">剩余时间约 ${sessionLeftMin()} 分钟 · 想继续就点"再来一轮",想休息随时收工</div>
+    <div style="width:100%;margin-top:16px;display:flex;gap:10px">
+      <button class="btn plain" onclick="endSession()">收工</button>
+      <button class="btn" onclick="startGame(S.game)">再来一轮</button></div>`;
+}
+function timeUp(){ return Date.now()>=S.endsAt; }
+function stageEl(){ return document.getElementById("stage"); }
+function endSession(early){
+  if(!S) return;
+  S.cleanups.forEach(f=>{try{f()}catch(e){}}); S.cleanups=[];
+  clearInterval(S.tick);
+  let stars = S.rounds>=1?1:0; if(S.rounds>=3) stars=2; if(S.rounds>=5) stars=3;
+  S.stars=stars;
+  G.history.unshift({id:uid(),ts:Date.now(),game:S.game,rounds:S.rounds,
+    hits:S.hits,trials:S.trials,stars,mood:null});
+  G.history=G.history.slice(0,20);
+  G.stars+=stars; save();
+  S=null;
+  showEnd(early);
+}
+
+/* ═══════ 游戏1 红绿灯(go/no-go) ═══════ */
+const FRUITS={good:["🍏","🍐","🫐","🍊"],bad:["🌶️"],gold:["⭐"]};
+function startLight(){
+  const d=diff();
+  stHeader("红绿灯 · 抓住绿色水果");
+  stageEl().insertAdjacentHTML("beforeend",`
+    <div class="prompt">看到 <b style="color:var(--primary)">水果</b> 立刻点它;看到 <b style="color:var(--accent)">辣椒</b> 什么都别做——比比谁能忍住!</div>
+    <div class="bigcard" id="stim"><span style="font-size:56px">❓</span></div>
+    <div class="feedback" id="fb">&nbsp;</div>
+    <div class="timebar"><i id="timefill"></i></div>`);
+  let stimT=null;
+  const card=()=>document.getElementById("stim");
+  function show(){
+    if(!S||S.game!=="light") return;
+    const c=card(); if(!c) return;
+    if(timeUp()){ endSession(); return; }
+    clearTimeout(stimT); stimT=null; // 关键:清掉上一轮残留的到期定时器,别让它吃掉新刺激
+    S.__shows=(S.__shows||0)+1;
+    const r=Math.random(); const kind = r<.62?"good":(r<.86?"bad":"gold");
+    c.className="bigcard "+(kind==="good"?"good":kind==="bad"?"bad":"gold");
+    c.innerHTML=`<span>${FRUITS[kind][Math.floor(Math.random()*FRUITS[kind].length)]}</span>`;
+    c.dataset.kind=kind; c.dataset.done="";
+    stimT=setTimeout(()=>{ // 到时消失
+      stimT=null;
+      if(!S||S.game!=="light") return;
+      const cc=card(); if(!cc||cc.dataset.done) return;
+      cc.dataset.done="1"; S.trials++;
+      if(kind==="bad"){ S.hits++; fb("忍住了,真棒!","+1",true); sOK(); fly("忍住 +1"); buzz(25); }
+      else { fb("溜走了…","注意要快一点哦",false); fly("溜走了…","mutedfly"); }
+      const t2=setTimeout(show,d.gap); S.cleanups.push(()=>clearTimeout(t2));
+    }, d.stim);
+  }
+  window.__stimTap=()=>{
+    if(!S||S.game!=="light") return;
+    const c=card(); if(!c||c.dataset.done) return;
+    c.dataset.done="1"; S.trials++;
+    clearTimeout(stimT); stimT=null; // 点中即取消本次到期计时
+    const kind=c.dataset.kind;
+    if(kind==="good"){ S.hits++; fb("抓到啦!","+1",true); sOK(); popCard(c,true); fly("+1"); buzz(25); }
+    else if(kind==="gold"){ S.hits++; fb("金色星星!+2","+2",true); sOK(); popCard(c,true); fly("+2 ⭐","gold"); buzz([20,40,20]); }
+    else { fb("哎呀,是辣椒…","下次先停一停",false); sNO(); popCard(c,false); fly("✗","no"); buzz(80); }
+    const t=setTimeout(show,450); S.cleanups.push(()=>clearTimeout(t));
+  };
+  card().addEventListener("pointerdown",window.__stimTap); // 手指落地即响应,反应游戏不用click
+  card().addEventListener("click",window.__stimTap); // 兜底;done守卫会挡掉pointerdown后的合成click
+  const t0=setTimeout(show,700); S.cleanups.push(()=>clearTimeout(t0));
+  // 连续10次正确尝试即一轮(粗略):以 trials 计,15次为一轮
+  const chk=setInterval(()=>{ if(!S||S.game!=="light"){clearInterval(chk);return;}
+    if(S.trials>= (S.__next||15)){ S.__next=(S.__next||15)+15; roundDone(); } },400);
+  S.cleanups.push(()=>clearInterval(chk));
+}
+function fb(msg,sub,ok){ const f=document.getElementById("fb"); if(!f) return;
+  f.className="feedback "+(ok?"ok":"no"); f.innerHTML=esc(msg)+" <span class='small muted'>"+esc(sub||"")+"</span>"; }
+function buzz(p){ try{ navigator.vibrate&&navigator.vibrate(p); }catch(e){} } // Android震动;iOS忽略
+function fly(label,cls){ const st=stageEl(); if(!st) return;
+  const f=document.createElement("div"); f.className="fly "+(cls||""); f.textContent=label;
+  st.appendChild(f);
+  const t=setTimeout(()=>f.remove(),700); if(S) S.cleanups.push(()=>clearTimeout(t)); }
+function popCard(c,good){ if(!c) return; // 强制重播动画(移除→回流→再加类)
+  c.classList.remove("hitpop","flash-good","flash-bad"); void c.offsetWidth;
+  c.classList.add("hitpop",good?"flash-good":"flash-bad"); }
+function stHeader(name){
+  stageEl().innerHTML=`<div class="gname"><span>${esc(name)}</span><span id="scoreline"></span></div>`;
+}
+function drawScore(){
+  const el=document.getElementById("scoreline"); if(!el||!S) return;
+  el.innerHTML=`得分 <b>${S.hits}</b> · 轮次 <b>${S.rounds}</b>`;
+  if(!S.__scoreInt){ S.__scoreInt=setInterval(()=>{ if(S&&document.getElementById("scoreline"))
+    document.getElementById("scoreline").innerHTML=`得分 <b>${S.hits}</b> · 轮次 <b>${S.rounds}</b>`; },600);
+    S.cleanups.push(()=>clearInterval(S.__scoreInt)); }
+}
+
+/* ═══════ 游戏2 星星复现(simon) ═══════ */
+function startSimon(){
+  const d=diff();
+  stHeader("星星复现 · 记住点亮的顺序");
+  stageEl().insertAdjacentHTML("beforeend",`
+    <div class="prompt">看星星怎么亮,然后<b>按一样的顺序</b>点回来</div>
+    <div class="simon" id="pads">${[0,1,2,3].map(i=>`<button class="pad p${i}" data-i="${i}" onclick="padTap(${i})"></button>`).join("")}</div>
+    <div class="simonmsg" id="smsg">准备…</div>
+    <div id="simonctl" style="width:100%"></div>
+    <div class="timebar"><i id="timefill"></i></div>`);
+  drawScore();
+  playSimonRound();
+}
+function playSimonRound(){
+  const seq=Array.from({length:G.__len},()=>Math.floor(Math.random()*4));
+  S.__seq=seq; S.__pos=0; S.__locked=true;
+  const ctl=document.getElementById("simonctl"); if(ctl) ctl.innerHTML="";
+  const m0=document.getElementById("smsg"); if(m0) m0.textContent=`第 ${S.rounds+1} 轮 · ${G.__len} 颗星 · 看好了…`;
+  const pads=()=>[...document.querySelectorAll("#pads .pad")];
+  seq.forEach((p,i)=>{ const t1=setTimeout(()=>{ const el=pads()[p]; if(!el) return;
+      el.classList.add("lit"); beep(500+p*120,.16);
+      const t2=setTimeout(()=>el.classList.remove("lit"),380);
+      S.cleanups.push(()=>clearTimeout(t2)); },600+i*620);
+    S.cleanups.push(()=>clearTimeout(t1)); });
+  const t3=setTimeout(()=>{ S.__locked=false;
+    const m=document.getElementById("smsg"); if(m) m.textContent="到你了!按一样的顺序点"; },600+seq.length*620);
+  S.cleanups.push(()=>clearTimeout(t3));
+}
+function padTap(i){
+  if(!S||S.game!=="simon"||!S.__seq||S.__locked) return; // 演示/等待确认期间,点按一律无效
+  const pads=()=>[...document.querySelectorAll("#pads .pad")];
+  pads()[i].classList.add("lit"); beep(500+i*120,.14);
+  setTimeout(()=>pads()[i]&&pads()[i].classList.remove("lit"),220);
+  if(S.__seq[S.__pos]===i){
+    S.__pos++; S.hits++; S.trials++;
+    if(S.__pos>=S.__seq.length){
+      if(G.__len<diff().simonMax) G.__len++;
+      roundDone();
+    }
+  } else {
+    S.trials++; sNO();
+    const wrongStep=S.__pos+1, correctIdx=S.__seq[S.__pos];
+    S.__pos=0; S.__locked=true;
+    const m=document.getElementById("smsg");
+    if(m) m.textContent=`第 ${wrongStep} 颗点错啦,正确的是闪亮的那颗`;
+    const el=pads()[correctIdx];
+    if(el){ el.classList.add("lit"); const tf=setTimeout(()=>el.classList.remove("lit"),900); S.cleanups.push(()=>clearTimeout(tf)); }
+    const ctl=document.getElementById("simonctl");
+    if(ctl) ctl.innerHTML=`<button class="btn" style="margin-top:12px" onclick="simonRetry()">再试一次</button>`;
+  }
+}
+function simonRetry(){ if(!S||S.game!=="simon") return; playSimonRound(); }
+
+/* ═══════ 游戏3 大小擂台(规则切换 · 擂台战) ═══════ */
+const OPPONENTS=[["🐘","大象擂主"],["🦏","犀牛擂主"],["🦍","大猩猩擂主"],["🐊","鳄鱼擂主"],["🦖","霸王龙擂主"]];
+function startStroop(){
+  const d=diff();
+  stHeader("大小擂台 · 规则会变,看仔细");
+  S.__trial=0; S.__rule="meaning"; S.__nextRule=d.ruleEvery;
+  S.__hp=100; S.__combo=0; S.__locked=false;
+  S.__opp=OPPONENTS[S.rounds % OPPONENTS.length]; // 每轮换擂主
+  nextStroop();
+}
+function stroopQuestion(){
+  const word=Math.random()<.5?"大":"小";
+  const big=Math.random()<.5;
+  return {word,big};
+}
+function nextStroop(){
+  const d=diff();
+  if(!S||S.game!=="stroop") return;
+  if(timeUp()){ endSession(); return; }
+  if(S.__trial>=d.stroopTrials){ roundDone("这一局撑满了,也很棒!"); return; }
+  let flip=false;
+  if(S.__trial>0 && S.__trial>=S.__nextRule){
+    S.__rule = S.__rule==="meaning"?"size":"meaning";
+    S.__nextRule += d.ruleEvery;
+    flip=true; beep(740,.2); buzz(40);
+  }
+  const q=stroopQuestion();
+  S.__q=q; S.__locked=false;
+  const ruleTxt = S.__rule==="meaning"
+    ? `🔵 按字的意思选("大"字就点 大)`
+    : `🟠 按字的个头选(字大就点 大)`;
+  stageEl().innerHTML=`<div class="gname"><span>大小擂台 · 规则会变,看仔细</span><span id="scoreline"></span></div>
+    <div class="opprow"><span class="oppemoji" id="oppEmoji">${S.__opp[0]}</span>
+      <div style="flex:1"><div class="small muted">${esc(S.__opp[1])} · 答对把它打下去!</div>
+      <div class="hpbar"><i id="oppHp" style="width:${S.__hp}%"></i></div></div></div>
+    <div class="prompt" id="ruleline">${ruleTxt}</div>
+    ${flip?`<div class="flipbanner" id="flipBanner">⚠️ 规则变啦!</div>`:""}
+    <div style="font-size:${q.big?96:38}px;font-weight:800;line-height:1.35;margin:6px 0" id="stimW">${q.word}</div>
+    <div class="comboline" id="comboLine">${S.__combo>=2?"🔥 连击 x"+S.__combo:"&nbsp;"}</div>
+    <div class="feedback" id="fb">&nbsp;</div>
+    <div class="tapbtns">
+      <button class="tapbtn a" onclick="stroopAnswer('大')">大</button>
+      <button class="tapbtn b" onclick="stroopAnswer('小')">小</button>
+    </div>
+    <div class="timebar"><i id="timefill"></i></div>`;
+  drawScore();
+  if(flip){ const b=document.getElementById("flipBanner");
+    if(b){ const t=setTimeout(()=>b.remove(),1050); S.cleanups.push(()=>clearTimeout(t)); } }
+}
+function stroopAnswer(v){
+  if(!S||S.game!=="stroop"||!S.__q||S.__locked) return;
+  S.trials++; S.__trial++;
+  const d=diff();
+  const correct = S.__rule==="meaning" ? v===S.__q.word : (v==="大")===S.__q.big;
+  const hpStep=Math.max(4,Math.round(100/Math.max(6,d.stroopTrials-4)));
+  if(correct){
+    S.hits++; S.__combo++;
+    S.__hp=Math.max(0,S.__hp - hpStep - (S.__combo>=5?2:0)); // 连击≥5,伤害加成
+    fb("对啦!","继续!",true); sOK();
+    if(S.__combo===5||S.__combo===10||S.__combo===15){ beep(660,.08); setTimeout(()=>beep(988,.12),90); buzz(20); }
+  } else {
+    if(S.__combo>=3) fly(`🔥x${S.__combo} 断了`,"no");
+    S.__combo=0;
+    S.__hp=Math.min(100,S.__hp+3); // 擂主回血
+    fb("反啦反啦!","停一停,看规则",false); sNO(); buzz(60);
+    S.__locked=true; // 450ms消化停顿:看清规则再继续
+    const t=setTimeout(nextStroop,450); S.cleanups.push(()=>clearTimeout(t));
+    if(S.__hp<=0){ roundDone("打败了"+S.__opp[1]+"!"); return; }
+    return;
+  }
+  if(S.__hp<=0){ roundDone("打败了"+S.__opp[1]+"!"); return; }
+  nextStroop();
+}
+
+/* ═══════ 分发 ═══════ */
+const GAMES={light:{name:"红绿灯",icon:"🚦"},simon:{name:"星星复现",icon:"✨"},stroop:{name:"大小擂台",icon:"🐘"}};
+function startGame(id){
+  if(!S) return;
+  document.getElementById("playInfo").textContent=`限时 ${G.sessionMin} 分钟 · 结束会带娃做呼吸练习`;
+  if(id==="light") startLight();
+  else if(id==="simon") startSimon();
+  else if(id==="stroop") startStroop();
+}
+
+/* ═══════ 结束仪式 ═══════ */
+let lastResult=null;
+function showEnd(early){
+  lastResult=lastResult||null;
+  const stars=S?S.stars:G.history[0].stars;
+  const rounds=S?S.rounds:G.history[0].rounds;
+  document.getElementById("v-play").classList.remove("on");
+  document.getElementById("v-end").classList.add("on");
+  const v=document.getElementById("v-end");
+  v.innerHTML=`<div class="card center">
+      <div class="gname center"><span>${early?"本次提前收工":"时间到!"} · 一起做三次"气球呼吸"平静下来</span></div>
+      <div class="balloon" id="balloon">准备…</div>
+      <div class="brmsg" id="brmsg">跟着气球:吸气…屏住…呼气…</div>
+      <button class="btn plain" id="skipBr" onclick="finishEnd()">跳过呼吸</button>
+    </div>
+    <div class="card center hide" id="endCard">
+      <div class="stars3" id="s3">${[0,1,2].map(i=>`<span class="${i<stars?"on":""}">⭐</span>`).join("")}</div>
+      <div class="prompt">本局完成 ${rounds} 轮,赢得 ${stars} 颗星!</div>
+      <div class="small muted" style="margin:6px 0 12px">玩到最后,把"停下来"的本领用到作业里,再让爸爸妈妈在家庭助手里给你加星吧。</div>
+      <div class="howto" style="text-align:left;margin-bottom:10px">玩得怎么样?</div>
+      <div class="moodrow">
+        <button class="mood" data-m="开心" onclick="pickMood(this)">😄</button>
+        <button class="mood" data-m="一般" onclick="pickMood(this)">😐</button>
+        <button class="mood" data-m="累" onclick="pickMood(this)">😣</button>
+      </div>
+      <div style="margin-top:14px" id="claimWrap"></div>
+      <button class="btn plain" style="margin-top:10px" onclick="toHub()">回大厅</button>
+    </div>`;
+  runBreath(()=>{ document.getElementById("endCard").classList.remove("hide");
+    document.getElementById("skipBr").classList.add("hide"); renderClaim(); });
+}
+function runBreath(done){
+  const b=document.getElementById("balloon"), m=document.getElementById("brmsg");
+  let i=0;
+  function one(){
+    if(!b||!m){ done&&done(); return; }
+    if(i>=3){ m.textContent="平静下来啦,真了不起!"; beep(880,.2); setTimeout(done,700); return; }
+    m.textContent=`第 ${i+1} 次:吸气…`; b.classList.add("big");
+    const t1=setTimeout(()=>{ if(m)m.textContent="屏住…";
+      const t2=setTimeout(()=>{ if(m)m.textContent="呼气…"; b.classList.remove("big");
+        const t3=setTimeout(()=>{ i++; one(); },3900);
+        endCleanups.push(()=>clearTimeout(t3));
+      },1200); endCleanups.push(()=>clearTimeout(t2));
+    },3800); endCleanups.push(()=>clearTimeout(t1));
+  }
+  one();
+}
+let endCleanups=[];
+function finishEnd(){
+  endCleanups.forEach(f=>{try{f()}catch(e){}}); endCleanups=[];
+  document.getElementById("endCard").classList.remove("hide");
+  document.getElementById("skipBr").classList.add("hide");
+  renderClaim();
+}
+function pickMood(el){
+  [...el.parentElement.children].forEach(c=>c.classList.remove("sel"));
+  el.classList.add("sel");
+  if(G.history[0]){ G.history[0].mood=el.dataset.m; save(); }
+}
+/* 家长确认领星(长按2.5秒),写入家庭助手的积分钱包 */
+let claimT=null,claimStart=0;
+function renderClaim(){
+  const w=document.getElementById("claimWrap"); if(!w) return;
+  const h=G.history[0]; if(!h||h.claimed){ w.innerHTML=""; return; }
+  const appState=localStorage.getItem(APPKEY);
+  w.innerHTML=`<button class="btn acc claim" id="claimBtn"><span class="claimring" id="cring"></span>
+      请家长长按确认 · 领 ${h.stars} 颗星到家庭助手</button>
+    <div class="small muted" style="margin-top:6px">${appState?"领取后星星会出现在「ADHD家庭助手」的积分余额里":"还没在家庭助手里建过档案?先打开一次「ADHD家庭助手」再来领星"}</div>`;
+  const btn=document.getElementById("claimBtn"), ring=document.getElementById("cring");
+  // Pointer Events + 指针捕获:手指轻微滑动不中断进度条,只有真正松手/系统打断才取消
+  const start=e=>{ if(claimT) return; e.preventDefault(); claimStart=Date.now();
+    try{ btn.setPointerCapture(e.pointerId); }catch(_){}
+    ring.style.transition="width 2.5s linear"; ring.style.width="100%";
+    claimT=setTimeout(claim,2500); };
+  const cancel=()=>{ if(!claimT) return; clearTimeout(claimT); claimT=null;
+    ring.style.transition="width .2s"; ring.style.width="0%"; };
+  btn.addEventListener("pointerdown",start);
+  btn.addEventListener("pointerup",cancel);
+  btn.addEventListener("pointercancel",cancel);
+  btn.addEventListener("contextmenu",e=>e.preventDefault());
+}
+function claim(){
+  clearTimeout(claimT); claimT=null;
+  const h=G.history[0]; if(!h||h.claimed) return;
+  let app=null; try{ app=JSON.parse(localStorage.getItem(APPKEY)); }catch(e){}
+  if(!app || typeof app!=="object" || !("goals" in app)){ toast("先打开一次「ADHD家庭助手」再领星哦"); return; }
+  app.bonusStars=(app.bonusStars||[]).concat([{ts:Date.now(),amount:h.stars,src:"专注力小游戏"}]);
+  try{ localStorage.setItem(APPKEY,JSON.stringify(app)); }catch(e){ toast("保存失败"); return; }
+  h.claimed=true; G.claimed+=h.stars; save();
+  sWIN(); toast(`已领取 ${h.stars} 颗星,去家庭助手看看吧!`);
+  renderClaim();
+}
+function toHub(){ document.getElementById("v-end").classList.remove("on"); render(); document.getElementById("v-hub").classList.add("on"); }
+
+/* ═══════ 大厅 ═══════ */
+function render(){
+  const d=diff();
+  const recent=G.history.slice(0,5).map(h=>`<div class="hist"><span>${todayKey(new Date(h.ts))} · ${GAMES[h.game]?GAMES[h.game].name:h.game} · ${h.rounds}轮</span><span>${"⭐".repeat(h.stars)||"—"}${h.mood?" "+esc(h.mood):""}</span></div>`).join("");
+  document.getElementById("v-hub").innerHTML=`
+    <div class="starrail"><div class="big">⭐ ${G.stars}</div>
+      <div><div class="lbl">累计赢得星星(已领到家庭助手的另计 ${G.claimed})</div>
+      <div class="lbl">每次限时 ${G.sessionMin} 分钟,到点自动带娃平静收工</div></div></div>
+    <button class="gcard" onclick="nav2('light')"><div class="ic" style="background:#E8F5E9">🚦</div>
+      <div><div class="t1">红绿灯</div><div class="t2">水果出现快点它,辣椒出现忍住别动</div>
+      <span class="skill">练:停下来 · 抑制冲动</span></div></button>
+    <button class="gcard" onclick="nav2('simon')"><div class="ic" style="background:#FFF4D6">✨</div>
+      <div><div class="t1">星星复现</div><div class="t2">星星按顺序亮,你能照原样点回来吗</div>
+      <span class="skill">练:记住 · 工作记忆</span></div></button>
+    <button class="gcard" onclick="nav2('stroop')"><div class="ic" style="background:var(--accent-tint)">🐘</div>
+      <div class="grow"><div class="t1">大小擂台</div><div class="t2">规则会突然变!按新规则马上反应</div>
+      <span class="skill">练:变通 · 灵活切换</span></div></button>
+    <div class="card"><h3>设置</h3>
+      <div class="small muted" style="margin-bottom:5px">孩子年龄(决定难度)</div>
+      <div class="chips" style="margin-bottom:10px">${["4-6","7-9","10-12"].map(a=>
+        `<button class="chip ${G.age===a?"sel":""}" onclick="setAge('${a}')">${a}岁</button>`).join("")}</div>
+      <div class="small muted" style="margin-bottom:5px">每次时长(到点自动结束)</div>
+      <div class="chips">${[5,10,15].map(m=>
+        `<button class="chip ${G.sessionMin===m?"sel":""}" onclick="setMin(${m})">${m}分钟</button>`).join("")}</div></div>
+    <div class="card"><h3>家长园地 <span class="small" style="cursor:pointer;color:var(--primary)" onclick="navParent()">怎么看数据 ›</span></h3>
+      <div class="howto"><b>怎么用最好:</b>每次1局左右、和家长一起玩;结束后夸具体行为("你刚才忍住没点辣椒,真棒");把游戏里的"停下来"接到写作业上,并在家庭助手里给对应目标加星。</div>
+      ${recent?`<div style="margin-top:8px">${recent}</div>`:""}</div>`;
+}
+function setAge(a){ G.age=a; G.sessionMin=diff().sessionDef; save(); render(); }
+function setMin(m){ G.sessionMin=m; save(); render(); }
+function nav2(id){ newSession(id); }
+function navParent(){
+  document.getElementById("v-hub").classList.remove("on");
+  const h=G.history;
+  const acc = h.length? Math.round(h.reduce((a,x)=>a+(x.trials?x.hits/x.trials:0),0)/h.length*100):0;
+  const stat = ["light","simon","stroop"].map(g=>{
+    const hs=h.filter(x=>x.game===g);
+    return `<div class="hist"><span>${GAMES[g].name} · 玩过${hs.length}次</span><span>最高${hs.length?Math.max(...hs.map(x=>x.rounds)):0}轮</span></div>`;}).join("");
+  document.getElementById("v-parent").innerHTML=`<div class="card">
+    <h3>家长园地</h3>
+    <div class="howto"><b>三个游戏分别在练什么(诚实版):</b>
+      <ul class="ul"><li><b>红绿灯</b>:go/no-go 范式,练"抑制控制"——想动的时候停得住。这是 ADHD 核心困难之一。</li>
+      <li><b>星星复现</b>:工作记忆广度任务,练"记性和坚持"。研究提示这类练习的提升主要出现在相似任务上,别期待直接变成作业专注力。</li>
+      <li><b>大小擂台</b>:规则切换任务,练"认知灵活"——被打断后能换回来。</li></ul>
+      <b>最重要的话:</b>游戏本身<b>不是治疗</b>。它真正的作用是:①让孩子在成功里练习"停下来、想一想";②给你一段高质量陪伴;③成为行为奖励的一部分。规范治疗(行为干预/遵医嘱用药)仍是主角。</div></div>
+    <div class="card"><h3>最近记录</h3>
+      ${h.length? h.slice(0,10).map(x=>`<div class="hist"><span>${todayKey(new Date(x.ts))} · ${GAMES[x.game].name} · ${x.rounds}轮 · 正确率${x.trials?Math.round(x.hits/x.trials*100):0}%</span><span>${"⭐".repeat(x.stars)||"—"}${x.mood?" "+esc(x.mood):""}</span></div>`).join(""):'<div class="small muted">还没有记录</div>'}
+      ${stat?`<div style="margin-top:8px">${stat}</div>`:""}
+      <div class="small muted" style="margin-top:8px">平均正确率约 ${acc}%。心情持续是"😣"?和孩子聊聊,必要时告诉医生。</div></div>
+    <button class="btn plain" onclick="document.getElementById('v-parent').classList.remove('on');document.getElementById('v-hub').classList.add('on')">返回大厅</button>`;
+  document.getElementById("v-parent").classList.add("on");
+}
+/* init */
+document.getElementById("muteBtn").textContent=G.muted?"🔇":"🔊";
+render();
+</script>
+</body>
+</html>

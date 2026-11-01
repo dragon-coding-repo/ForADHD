@@ -1,0 +1,31 @@
+.weeknav { display: flex; align-items: center; justify-content: space-between; }
+.wk { font-size: 30rpx; font-weight: 700; }
+.wkbtn {
+  background: #F2F3F3; border-radius: 18rpx; width: 68rpx; height: 64rpx;
+  font-size: 30rpx; color: #22312C; line-height: 64rpx; text-align: center; padding: 0;
+}
+.wkbtn.dim { opacity: 0.35; }
+
+.ghead { display: flex; align-items: center; padding: 8rpx 0; }
+.ghead .gname, .grow .gname { flex: 1; min-width: 0; }
+.gcellhd { width: 64rpx; text-align: center; font-size: 23rpx; color: #68766F; }
+.ghead .gname { font-size: 23rpx; color: #68766F; }
+.grow { display: flex; align-items: center; padding: 8rpx 0; }
+.grow .gname { font-size: 26rpx; word-break: break-all; padding-right: 8rpx; }
+.gcell { width: 64rpx; display: flex; justify-content: center; }
+.grow .star { width: 58rpx; height: 58rpx; line-height: 58rpx; font-size: 30rpx; }
+.sum { width: 56rpx; text-align: center; font-size: 24rpx; color: #177E6A; font-weight: 700; }
+.grow.total .gname { font-size: 24rpx; }
+.archived { color: #A9B5AF; text-decoration: line-through; }
+
+.sec-title { display: flex; justify-content: space-between; align-items: baseline; margin: 32rpx 32rpx 0; }
+.sec-title .b { font-size: 32rpx; font-weight: 700; }
+
+.rrow { display: flex; align-items: center; gap: 20rpx; padding: 20rpx 4rpx; border-bottom: 1rpx solid #E3E9E6; }
+.rrow:last-child { border-bottom: none; }
+.rname { font-size: 29rpx; font-weight: 600; }
+.rname.done { text-decoration: line-through; color: #A9B5AF; }
+.cost { font-size: 26rpx; color: #E8663C; font-weight: 700; margin-top: 4rpx; }
+.btn.sm { padding: 12rpx 26rpx; font-size: 27rpx; border-radius: 18rpx; width: auto; }
+.addrow { display: flex; gap: 16rpx; margin-top: 24rpx; align-items: center; }
+.costin { width: 130rpx; flex: none; }

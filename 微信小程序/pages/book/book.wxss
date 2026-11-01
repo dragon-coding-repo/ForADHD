@@ -1,0 +1,26 @@
+.chnum {
+  width: 68rpx; height: 68rpx; border-radius: 20rpx; background: #E7F3EF;
+  color: #177E6A; font-weight: 800; font-size: 30rpx;
+  display: flex; align-items: center; justify-content: center; flex: none;
+}
+.readerctl { display: flex; align-items: center; gap: 16rpx; }
+.fbtn {
+  background: #F2F3F3; border-radius: 16rpx; width: 68rpx; height: 60rpx;
+  font-size: 28rpx; line-height: 60rpx; text-align: center; padding: 0;
+}
+.bookback { color: #177E6A; font-size: 27rpx; }
+
+.reader { font-size: 30rpx; }
+.rh1 { display: block; font-size: 44rpx; font-weight: 800; color: #0E332E; margin: 16rpx 0 24rpx; line-height: 1.35; }
+.rh2 { display: block; font-size: 36rpx; font-weight: 700; color: #177E6A; margin: 32rpx 0 16rpx; line-height: 1.4; }
+.rp { display: block; text-align: justify; margin-bottom: 22rpx; color: #2C3A34; line-height: 1.75; }
+.rtip { background: #E7F3EF; border-radius: 24rpx; padding: 26rpx 30rpx; margin: 24rpx 0; }
+.rtipt { display: block; font-weight: 700; color: #177E6A; margin-bottom: 8rpx; }
+.rtipx { display: block; font-size: 28rpx; color: #1F463C; line-height: 1.7; }
+.rtable { border: 1rpx solid #D0DDE8; border-radius: 20rpx; overflow: hidden; margin: 24rpx 0 32rpx; }
+.rth { display: flex; background: #2E86C1; }
+.rtcellh { flex: 1; color: #fff; font-size: 26rpx; font-weight: 600; padding: 16rpx 20rpx; }
+.rtr { display: flex; border-top: 1rpx solid #D0DDE8; }
+.rtr.alt { background: #EDF3F8; }
+.rtl { flex: 2; padding: 16rpx 20rpx; font-size: 26rpx; font-weight: 600; word-break: break-all; }
+.rtv { flex: 3; padding: 16rpx 20rpx; font-size: 26rpx; word-break: break-all; color: #2C3A34; }

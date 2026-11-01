@@ -1,0 +1,4 @@
+{
+  "desc": "家庭私人工具,不允许被搜索收录",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}

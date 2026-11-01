@@ -1,0 +1,110 @@
+<view class="subbar">
+  <view><view class="tt">{{modeName}}</view><view class="sub">ADHD家庭助手 · 专注力练习</view></view>
+  <view class="btns">
+    <button class="ghostbtn" bindtap="endEarly">结束本次</button>
+  </view>
+</view>
+
+<!-- ══ 游戏进行中 ══ -->
+<block wx:if="{{stage === 'play'}}">
+  <view class="stagewrap">
+    <view class="gname"><text>{{modeName}}</text><text>{{scoreline}}</text></view>
+
+    <!-- 红绿灯 -->
+    <block wx:if="{{mode === 'light'}}">
+      <view class="prompt">看到 <text class="hl-g">水果</text> 立刻点它;看到 <text class="hl-r">辣椒</text> 什么都别做——比比谁能忍住!</view>
+      <view class="bigcard {{stimCls}}" bindtouchstart="stimTap">
+        <text class="stimemoji">{{stimDone ? "" : stimEmoji}}</text>
+      </view>
+      <view class="feedback {{fbState}}">{{fbText}} <text class="fbsub">{{fbSub}}</text></view>
+    </block>
+
+    <!-- 星星复现 -->
+    <block wx:if="{{mode === 'simon'}}">
+      <view class="prompt">看星星怎么亮,然后<text class="hl-g">按一样的顺序</text>点回来</view>
+      <view class="simon">
+        <button class="pad p0 {{pads[0] ? 'lit' : ''}}" data-i="0" bindtap="padTap"></button>
+        <button class="pad p1 {{pads[1] ? 'lit' : ''}}" data-i="1" bindtap="padTap"></button>
+        <button class="pad p2 {{pads[2] ? 'lit' : ''}}" data-i="2" bindtap="padTap"></button>
+        <button class="pad p3 {{pads[3] ? 'lit' : ''}}" data-i="3" bindtap="padTap"></button>
+      </view>
+      <view class="simonmsg">{{simonMsg}}</view>
+      <button wx:if="{{showRetry}}" class="btn" style="margin-top:24rpx" bindtap="simonRetry">再试一次</button>
+    </block>
+
+    <!-- 大小擂台 -->
+    <block wx:if="{{mode === 'stroop'}}">
+      <view class="opprow">
+        <text class="oppemoji">{{oppEmoji}}</text>
+        <view class="grow">
+          <view class="small muted">{{oppName}} · 答对把它打下去!</view>
+          <view class="hpbar"><view class="hpfill" style="width:{{hp}}%"></view></view>
+        </view>
+      </view>
+      <view class="rulebadge {{isMeaning ? 'rm' : 'rs'}}">{{ruleTxt}}</view>
+      <view class="opprow2"><text class="char {{charBig ? 'cbig' : 'csmall'}}">{{charText}}</text></view>
+      <view class="comboline">{{combo >= 2 ? "🔥 连击 x" + combo : " "}}</view>
+      <view class="feedback {{fbState}}">{{fbText}}</view>
+      <view class="tapbtns">
+        <button class="tapbtn a" hover-class="tapbtn-hover" hover-stay-time="80" data-v="大" bindtap="stroopAnswer">大</button>
+        <button class="tapbtn b" hover-class="tapbtn-hover" hover-stay-time="80" data-v="小" bindtap="stroopAnswer">小</button>
+      </view>
+    </block>
+
+    <view class="timebar"><view class="timefill" style="width:{{timePct}}%"></view></view>
+    <view class="flylayer">
+      <text wx:for="{{flyItems}}" wx:key="id" class="fly {{item.cls}}">{{item.text}}</text>
+    </view>
+    <view wx:if="{{flipBanner}}" class="flipbanner">⚠️ 规则变啦!</view>
+    <view class="small muted center" style="margin-top:20rpx">剩余约 {{minsLeft}} 分钟 · {{sessionMin}}分钟后自动收工</view>
+  </view>
+</block>
+
+<!-- ══ 一轮完成,等确认 ══ -->
+<block wx:if="{{stage === 'round'}}">
+  <view class="stagewrap center">
+    <view class="cheer">🎉</view>
+    <view class="roundtitle">{{roundTitle}}</view>
+    <view class="small muted" style="margin-top:12rpx">剩余时间约 {{minsLeft}} 分钟 · 想继续就点"再来一轮",想休息随时收工</view>
+    <view class="btnrow" style="margin-top:32rpx">
+      <button class="btn plain" bindtap="endEarly">收工</button>
+      <button class="btn" bindtap="playAgain">再来一轮</button>
+    </view>
+  </view>
+</block>
+
+<!-- ══ 收工仪式 ══ -->
+<block wx:if="{{stage === 'end'}}">
+  <view class="card center">
+    <view class="endtitle">{{endTitle}}</view>
+    <view class="balloon {{balloonBig ? 'big' : ''}}"></view>
+    <view class="brmsg">{{brMsg}}</view>
+    <button wx:if="{{!breathDone}}" class="btn plain" style="margin-top:8rpx" bindtap="skipBreath">跳过呼吸</button>
+  </view>
+
+  <view class="card center" wx:if="{{breathDone}}">
+    <view class="stars3">
+      <text class="s3 {{stars3[0] ? 'on' : ''}}">⭐</text>
+      <text class="s3 {{stars3[1] ? 'on' : ''}}">⭐</text>
+      <text class="s3 {{stars3[2] ? 'on' : ''}}">⭐</text>
+    </view>
+    <view class="prompt">本局完成 {{endRounds}} 轮,赢得 {{endStarN}} 颗星!</view>
+    <view class="small muted" style="margin:12rpx 0 24rpx">玩到最后,把"停下来"的本领用到作业里,再让爸爸妈妈给你加星吧。</view>
+    <view class="small" style="margin-bottom:16rpx">玩得怎么样?</view>
+    <view class="moodrow">
+      <button class="mood {{mood === '开心' ? 'sel' : ''}}" data-m="开心" bindtap="pickMood">😄</button>
+      <button class="mood {{mood === '一般' ? 'sel' : ''}}" data-m="一般" bindtap="pickMood">😐</button>
+      <button class="mood {{mood === '累' ? 'sel' : ''}}" data-m="累" bindtap="pickMood">😣</button>
+    </view>
+    <view style="margin-top:32rpx" wx:if="{{!claimed}}">
+      <button class="btn acc claimbtn"
+        bindtouchstart="claimStart" bindtouchend="claimCancel" bindtouchcancel="claimCancel">
+        <view class="claimring" style="width:{{claimW}}%"></view>
+        <text class="claimtxt">请家长长按确认 · 领{{endStarN}}颗星到家庭助手</text>
+      </button>
+      <view class="small muted" style="margin-top:12rpx">{{claimHint}}</view>
+    </view>
+    <view wx:if="{{claimed}}" class="claimed-ok">✓ 星星已存入家庭助手积分钱包</view>
+    <button class="btn plain" style="margin-top:24rpx" bindtap="goHub">回大厅</button>
+  </view>
+</block>

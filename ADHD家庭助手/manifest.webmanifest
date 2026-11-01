@@ -1,0 +1,14 @@
+{
+  "name": "ADHD家庭助手",
+  "short_name": "家庭助手",
+  "description": "ADHD患儿家庭的日常管理工具:星星打卡、行为记录、作业计时与随身手册",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F4F7F6",
+  "theme_color": "#0E332E",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,56 @@
+<view class="hotcard">
+  <view class="h1">心理援助热线(全国统一)</view>
+  <view class="hnum" bindtap="callHotline">12356</view>
+  <view class="hd">24小时 · 家长情绪濒临崩溃时也可以拨打 · 紧急情况拨打 120 / 110</view>
+</view>
+
+<view class="card">
+  <view class="card-title">这些信号,请尽快求助</view>
+  <view class="signal">· 孩子情绪持续低落、兴趣减退超过两周</view>
+  <view class="signal">· 出现自伤行为,或谈论死亡、想消失</view>
+  <view class="signal">· 频繁严重攻击行为</view>
+  <view class="signal">· 拒绝上学持续一周以上</view>
+  <view class="signal">· 家长自身明显抑郁、焦虑或失控</view>
+</view>
+
+<view class="card">
+  <view class="card-title">三个练习分别在练什么(诚实版)</view>
+  <view class="howto">
+    <view class="li"><text class="howto-b">红绿灯</text>:go/no-go 范式,练"抑制控制"——想动的时候停得住,这是ADHD核心困难之一。</view>
+    <view class="li"><text class="howto-b">星星复现</text>:工作记忆广度任务。研究提示这类练习的提升主要出现在相似任务上,别期待直接变成作业专注力。</view>
+    <view class="li"><text class="howto-b">大小擂台</text>:规则切换任务,练"认知灵活"——被打断后能换回来。</view>
+  </view>
+  <view class="warnbox"><text class="howto-b">最重要的话:</text>练习本身不是治疗。它真正的作用:①让孩子在成功里练习"停下来、想一想";②给你一段高质量陪伴;③成为行为奖励的一部分。规范治疗(行为干预/遵医嘱用药)仍是主角。</view>
+</view>
+
+<view class="card">
+  <view class="card-title">最近记录</view>
+  <view wx:if="{{!recent.length}}" class="empty">还没有记录</view>
+  <view class="hist" wx:for="{{recent}}" wx:key="id">
+    <text>{{item.date}} · {{item.name}} · {{item.rounds}}轮 · 正确率{{item.acc}}%</text>
+    <text>{{item.mood}}</text>
+  </view>
+  <view style="margin-top:16rpx">
+    <view class="hist" wx:for="{{perGame}}" wx:key="game">
+      <text>{{item.game}} · 玩过{{item.count}}次</text>
+      <text>最高{{item.best}}轮</text>
+    </view>
+  </view>
+  <view class="small muted" style="margin-top:16rpx">平均正确率约 {{acc}}%。心情持续是"累/一般"?和孩子聊聊,必要时告诉医生。</view>
+</view>
+
+<view class="card">
+  <view class="card-title">家长课堂 · 18页要点
+    <text class="card-more" bindtap="toggleSlides">{{slidesOpen ? "收起" : "展开"}}</text>
+  </view>
+  <block wx:if="{{slidesOpen}}">
+    <view class="slide-nav">
+      <button class="fbtn {{slideIdx === 0 ? 'disabled' : ''}}" bindtap="prevSlide">‹</button>
+      <text class="small muted">第 {{slideIdx + 2}} / {{slides.length + 1}} 页</text>
+      <button class="fbtn {{slideIdx >= slides.length - 1 ? 'disabled' : ''}}" bindtap="nextSlide">›</button>
+    </view>
+    <view class="slidetitle">{{slides[slideIdx].title}}</view>
+    <view class="slideli" wx:for="{{slides[slideIdx].lines}}" wx:key="*this">· {{item}}</view>
+  </block>
+  <view wx:else class="small muted">来自《ADHD家长课堂》演示文稿,可在手机上快速翻阅。</view>
+</view>

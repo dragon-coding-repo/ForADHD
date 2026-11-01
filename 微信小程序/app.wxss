@@ -1,0 +1,86 @@
+/* 全局设计令牌与公共组件(调色板与网页版一致) */
+page {
+  background: #F4F7F6;
+  color: #22312C;
+  font-size: 30rpx;
+  line-height: 1.55;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+view, text, button, input, picker { box-sizing: border-box; }
+button { background: transparent; padding: 0; margin: 0; line-height: inherit; border-radius: 0; }
+button::after { border: none; }
+
+.card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 32rpx;
+  margin: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(20, 50, 44, 0.06);
+}
+.card-title { font-size: 32rpx; font-weight: 700; margin-bottom: 20rpx; display: flex; justify-content: space-between; align-items: center; }
+.card-more { font-size: 26rpx; color: #177E6A; font-weight: 400; }
+.muted { color: #68766F; }
+.small { font-size: 25rpx; }
+.center { text-align: center; }
+
+.btn {
+  background: #177E6A; color: #fff; border-radius: 24rpx;
+  padding: 22rpx 32rpx; font-size: 31rpx; font-weight: 600; text-align: center;
+}
+.btn.acc { background: #E8663C; }
+.btn.plain { background: #E7F3EF; color: #177E6A; }
+.btn.disabled { opacity: 0.45; }
+.btnrow { display: flex; gap: 20rpx; margin-top: 12rpx; }
+.btnrow > .btn { flex: 1; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.chip {
+  background: #F2F3F3; color: #22312C; border-radius: 36rpx;
+  padding: 14rpx 28rpx; font-size: 27rpx; border: 3rpx solid transparent;
+}
+.chip.sel { background: #E7F3EF; border-color: #177E6A; color: #177E6A; font-weight: 700; }
+.chip.sel.neg { background: #FBE9E2; border-color: #E8663C; color: #E8663C; }
+.chip.sel.pos { background: #E8F5E9; border-color: #1B7D46; color: #1B7D46; }
+.chip.pos { background: #E8F5E9; color: #1B7D46; }
+
+.rowitem { display: flex; align-items: center; gap: 24rpx; padding: 24rpx 4rpx; border-bottom: 1rpx solid #E3E9E6; }
+.rowitem:last-child { border-bottom: none; }
+.grow { flex: 1; min-width: 0; }
+.t1 { font-size: 30rpx; font-weight: 600; }
+.t2 { font-size: 25rpx; color: #68766F; margin-top: 4rpx; word-break: break-all; }
+.del { color: #C9CFCC; font-size: 28rpx; padding: 12rpx 8rpx; }
+.empty { color: #A9B5AF; font-size: 27rpx; text-align: center; padding: 44rpx 20rpx; }
+
+.tag { font-size: 22rpx; border-radius: 12rpx; padding: 4rpx 14rpx; background: #E7F3EF; color: #177E6A; margin-right: 10rpx; display: inline-block; }
+.tag.neg { background: #FBE9E2; color: #E8663C; }
+.tag.pos { background: #E8F5E9; color: #1B7D46; }
+
+.field { margin-bottom: 20rpx; }
+.field-label { display: block; font-size: 25rpx; color: #68766F; margin-bottom: 10rpx; }
+.input {
+  width: 100%; border: 3rpx solid #E3E9E6; border-radius: 20rpx;
+  padding: 20rpx 24rpx; background: #fff; font-size: 29rpx;
+}
+.prog { height: 16rpx; border-radius: 10rpx; background: #F2F3F3; overflow: hidden; margin-top: 20rpx; }
+.prog-fill { height: 100%; background: #177E6A; border-radius: 10rpx; transition: width 0.3s; }
+
+/* 星星按钮 */
+.star {
+  width: 68rpx; height: 68rpx; border-radius: 20rpx; background: #F2F3F3;
+  font-size: 34rpx; color: #C4CDC9; line-height: 68rpx; text-align: center; padding: 0;
+}
+.star.on { background: #FFD66B; color: #8A6100; box-shadow: 0 2rpx 6rpx rgba(200, 150, 0, 0.35); }
+.star.today { outline: 4rpx solid #177E6A; outline-offset: -4rpx; }
+.star.dim { opacity: 0.35; }
+
+/* 顶部导航条(游戏/二级页用) */
+.subbar {
+  background: #0E332E; color: #fff; padding: 20rpx 32rpx;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.subbar .tt { font-size: 36rpx; font-weight: 700; }
+.subbar .sub { font-size: 23rpx; color: #8FBDB2; }
+.ghostbtn {
+  background: rgba(255, 255, 255, 0.12); color: #fff; border-radius: 32rpx;
+  padding: 10rpx 24rpx; font-size: 25rpx; line-height: 1.6;
+}

@@ -1,0 +1,71 @@
+<view class="weeknav card" style="padding:24rpx 32rpx">
+  <button class="wkbtn" data-n="-1" bindtap="shiftWeek">‹</button>
+  <text class="wk">{{week}} 那一周</text>
+  <button class="wkbtn {{isCur ? 'dim' : ''}}" data-n="1" bindtap="shiftWeek">›</button>
+</view>
+
+<view class="card">
+  <view class="ghead">
+    <text class="gname">目标</text>
+    <text class="gcellhd" wx:for="{{wd}}" wx:key="*this">{{item}}</text>
+    <text class="gcellhd">周</text>
+  </view>
+  <view class="grow" wx:for="{{rows}}" wx:for-item="row" wx:key="id">
+    <text class="gname">{{row.name}}</text>
+    <view class="gcell" wx:for="{{row.cells}}" wx:for-item="cell" wx:for-index="ci" wx:key="ci">
+      <button class="star {{cell ? 'on' : ''}} {{fut[ci] ? 'dim' : ''}}" data-gid="{{row.id}}" data-dow="{{ci}}" bindtap="onStar">★</button>
+    </view>
+    <text class="sum">{{row.sum}}</text>
+  </view>
+  <view wx:if="{{!rows.length}}" class="empty">添加第一个目标:小而具体,孩子够得着</view>
+  <view class="grow total">
+    <text class="gname muted">本周合计</text>
+    <view class="gcell" wx:for="{{wd}}" wx:key="*this"></view>
+    <text class="sum">{{weekTotal}}</text>
+  </view>
+  <view class="small muted" style="margin-top:16rpx">规则:每达成一次点亮一颗星,当天就肯定孩子;星星自动攒进积分,可兑换奖励。</view>
+</view>
+
+<view class="card">
+  <view class="card-title">目标管理</view>
+  <view class="rowitem" wx:for="{{goalsAll}}" wx:key="id">
+    <view class="grow">
+      <view class="t1 {{item.archived ? 'archived' : ''}}">{{item.name}}</view>
+      <view wx:if="{{item.archived}}" class="t2">已归档</view>
+    </view>
+    <button class="del" data-id="{{item.id}}" bindtap="archiveGoal">{{item.archived ? "删除" : "归档"}}</button>
+  </view>
+  <view class="addrow">
+    <input class="input grow" value="{{newGoal}}" placeholder="新目标,如:放学后先运动30分钟" maxlength="30" bindinput="onGoalInput" />
+    <button class="btn" style="width:150rpx;flex:none" bindtap="addGoal">添加</button>
+  </view>
+  <view class="small muted" style="margin-top:16rpx">一次只立1至3个目标;连续两周轻松达成就换新的。</view>
+</view>
+
+<view class="sec-title"><text class="b">奖励菜单</text><text class="small muted">可用 {{bal}} 颗星</text></view>
+<view class="card">
+  <view class="rrow" wx:for="{{rewards}}" wx:key="id">
+    <view class="grow">
+      <view class="rname {{item.done ? 'done' : ''}}">{{item.name}}</view>
+      <view class="cost">⭐ {{item.cost}}</view>
+    </view>
+    <button wx:if="{{item.done}}" class="btn plain sm" data-id="{{item.id}}" bindtap="unredeem">撤销兑换</button>
+    <button wx:else class="btn sm {{item.can ? '' : 'disabled'}}" data-id="{{item.id}}" bindtap="redeem">兑换</button>
+  </view>
+  <view class="addrow">
+    <input class="input grow" value="{{newReward}}" placeholder="和孩子一起商量新奖励" maxlength="30" bindinput="onRewardInput" />
+    <input class="input costin" type="number" value="{{newRewardCost}}" placeholder="⭐" bindinput="onRewardCost" />
+    <button class="btn" style="width:150rpx;flex:none" bindtap="addReward">添加</button>
+  </view>
+  <view class="small muted" style="margin-top:16rpx">吃饭、拥抱、基本的爱与陪伴永远不设条件;兑换要说到做到。</view>
+</view>
+
+<view wx:if="{{redemptions.length}}" class="card">
+  <view class="card-title">兑换记录</view>
+  <view class="rowitem" wx:for="{{redemptions}}" wx:key="id">
+    <view class="grow">
+      <view class="t1" style="font-size:28rpx">{{item.name}}</view>
+      <view class="t2">{{item.date}} −{{item.cost}}⭐</view>
+    </view>
+  </view>
+</view>

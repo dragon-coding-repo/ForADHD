@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/today/today",
+    "pages/checkin/checkin",
+    "pages/log/log",
+    "pages/book/book",
+    "pages/games/games",
+    "pages/game/game",
+    "pages/parent/parent",
+    "pages/more/more"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0E332E",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "ADHD家庭助手",
+    "backgroundColor": "#F4F7F6",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#9AA8A2",
+    "selectedColor": "#177E6A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/today/today", "text": "今日", "iconPath": "assets/tab/home-off.png", "selectedIconPath": "assets/tab/home-on.png" },
+      { "pagePath": "pages/checkin/checkin", "text": "打卡", "iconPath": "assets/tab/star-off.png", "selectedIconPath": "assets/tab/star-on.png" },
+      { "pagePath": "pages/log/log", "text": "记录", "iconPath": "assets/tab/log-off.png", "selectedIconPath": "assets/tab/log-on.png" },
+      { "pagePath": "pages/book/book", "text": "手册", "iconPath": "assets/tab/book-off.png", "selectedIconPath": "assets/tab/book-on.png" },
+      { "pagePath": "pages/games/games", "text": "练习", "iconPath": "assets/tab/pad-off.png", "selectedIconPath": "assets/tab/pad-on.png" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,8 @@
+.hotcard {
+  background: linear-gradient(135deg, #7A2E1B, #E8663C); color: #fff;
+  border-radius: 32rpx; padding: 36rpx; margin: 24rpx;
+}
+.hotcard .h1 { font-size: 34rpx; font-weight: 700; }
+.hotcard .hnum { font-size: 60rpx; font-weight: 800; margin: 12rpx 0 4rpx; }
+.hotcard .hd { font-size: 25rpx; color: #FFD9CB; }
+.btn.sm { padding: 14rpx 28rpx; font-size: 27rpx; border-radius: 18rpx; width: auto; }

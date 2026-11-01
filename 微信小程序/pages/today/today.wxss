@@ -1,0 +1,37 @@
+.topbar {
+  background: #0E332E; color: #fff;
+  padding: 24rpx 32rpx;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tt { font-size: 38rpx; font-weight: 700; }
+.hb-right { display: flex; align-items: center; gap: 20rpx; }
+.hb-date { font-size: 23rpx; color: #8FBDB2; }
+
+.balance {
+  background: linear-gradient(135deg, #0E332E, #11594B); color: #fff;
+  border-radius: 36rpx; padding: 40rpx 36rpx; margin: 24rpx; position: relative; overflow: hidden;
+}
+.balance .num { font-size: 88rpx; font-weight: 800; line-height: 1.1; }
+.balance .unit { font-size: 32rpx; font-weight: 400; color: #9DC9BE; margin-left: 8rpx; }
+.balance .lbl { font-size: 26rpx; color: #9DC9BE; margin-top: 4rpx; }
+.balance .split { display: flex; gap: 44rpx; margin-top: 24rpx; font-size: 25rpx; color: #BFE0D7; }
+.balance .split b { color: #fff; font-size: 30rpx; display: block; }
+
+.srow { display: flex; align-items: center; gap: 24rpx; padding: 20rpx 4rpx; border-bottom: 1rpx solid #E3E9E6; }
+.srow:last-child { border-bottom: none; }
+.tm { font-size: 26rpx; color: #177E6A; font-weight: 700; width: 96rpx; flex: none; }
+.sitem { flex: 1; font-size: 29rpx; }
+.sitem.done { color: #A9B5AF; text-decoration: line-through; }
+.ck {
+  width: 48rpx; height: 48rpx; border-radius: 16rpx; border: 4rpx solid #CBD6D1;
+  background: #fff; color: transparent; font-size: 26rpx; line-height: 44rpx; text-align: center; padding: 0;
+}
+.ck.on { background: #177E6A; border-color: #177E6A; color: #fff; }
+
+.mask { position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(10, 30, 26, 0.55); z-index: 50; display: none; align-items: flex-end; }
+.mask.on { display: flex; }
+.sheet { background: #fff; width: 100%; border-radius: 40rpx 40rpx 0 0; padding: 40rpx 36rpx 80rpx; }
+.grab { width: 80rpx; height: 8rpx; border-radius: 6rpx; background: #D8DFDC; margin: 0 auto 28rpx; }
+.sheet-title { font-size: 36rpx; font-weight: 700; text-align: center; margin-bottom: 20rpx; }
+.timer-num { font-size: 128rpx; font-weight: 800; text-align: center; color: #0E332E; }
+.timer-sub { text-align: center; color: #68766F; font-size: 26rpx; margin-bottom: 24rpx; }

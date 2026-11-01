@@ -1,0 +1,48 @@
+<!-- 章节列表 -->
+<block wx:if="{{mode === 'list'}}">
+  <view class="card">
+    <view class="card-title">ADHD儿童家庭指导手册 <text class="small muted">全文随身版</text></view>
+    <view class="rowitem" wx:for="{{chs}}" wx:key="idx" data-idx="{{item.idx}}" bindtap="openChapter">
+      <view class="chnum">{{item.idx + 1}}</view>
+      <view class="grow">
+        <view class="t1">{{item.title}}</view>
+        <view class="t2">{{item.count}} 个段落</view>
+      </view>
+      <text class="muted">›</text>
+    </view>
+    <view class="small muted" style="margin-top:16rpx">健康教育资料,不能替代医生面诊;诊断与用药请遵从专业医生。</view>
+  </view>
+</block>
+
+<!-- 阅读器 -->
+<block wx:if="{{mode === 'reader'}}">
+  <view class="readerctl card" style="padding:20rpx 28rpx">
+    <text class="muted small">字号</text>
+    <button class="fbtn" bindtap="fontMinus">A−</button>
+    <button class="fbtn" bindtap="fontPlus">A+</button>
+    <view style="flex:1"></view>
+    <text class="bookback" bindtap="backList">‹ 目录</text>
+  </view>
+  <view class="card reader">
+    <view class="rh1">{{chTitle}}</view>
+    <block wx:for="{{blocks}}" wx:key="index">
+      <text wx:if="{{item.t === 'h2'}}" class="rh2" user-select>{{item.x}}</text>
+      <text wx:elif="{{item.t === 'p'}}" class="rp" user-select>{{item.x}}</text>
+      <view wx:elif="{{item.t === 'tip'}}" class="rtip">
+        <text class="rtipt">{{item.title}}</text>
+        <text class="rtipx">{{item.x}}</text>
+      </view>
+      <view wx:elif="{{item.t === 'table'}}" class="rtable">
+        <view class="rth"><text class="rtcellh">{{item.headers[0]}}</text><text class="rtcellh">{{item.headers[1]}}</text></view>
+        <view class="rtr {{item.i % 2 === 1 ? 'alt' : ''}}" wx:for="{{item.rows}}" wx:for-item="row" wx:key="i">
+          <text class="rtl" user-select>{{row.c0}}</text>
+          <text class="rtv" user-select>{{row.c1}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+  <view style="margin:0 24rpx 40rpx">
+    <button wx:if="{{hasNext}}" class="btn plain" bindtap="nextChapter">下一章 ›</button>
+    <view wx:else class="empty">已是最后一章</view>
+  </view>
+</block>

@@ -1,0 +1,25 @@
+.hotcard {
+  background: linear-gradient(135deg, #7A2E1B, #E8663C); color: #fff;
+  border-radius: 32rpx; padding: 36rpx; margin: 24rpx;
+}
+.hotcard .h1 { font-size: 34rpx; font-weight: 700; }
+.hotcard .hnum { font-size: 60rpx; font-weight: 800; margin: 12rpx 0 4rpx; }
+.hotcard .hd { font-size: 25rpx; color: #FFD9CB; }
+.signal { font-size: 27rpx; color: #41504A; line-height: 1.9; }
+.howto { font-size: 27rpx; color: #41504A; line-height: 1.9; }
+.howto .li { margin-bottom: 12rpx; }
+.howto-b { font-weight: 700; color: #22312C; }
+.warnbox {
+  margin-top: 20rpx; background: #FBE9E2; border-radius: 24rpx;
+  padding: 24rpx; font-size: 27rpx; color: #6B3320; line-height: 1.8;
+}
+.hist { display: flex; justify-content: space-between; font-size: 25rpx; color: #68766F; padding: 14rpx 4rpx; border-bottom: 1rpx solid #E3E9E6; }
+.hist:last-child { border-bottom: none; }
+.slide-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16rpx; }
+.fbtn {
+  background: #F2F3F3; border-radius: 16rpx; width: 68rpx; height: 60rpx;
+  font-size: 28rpx; line-height: 60rpx; text-align: center; padding: 0;
+}
+.fbtn.disabled { opacity: 0.35; }
+.slidetitle { font-size: 32rpx; font-weight: 700; margin-bottom: 12rpx; }
+.slideli { font-size: 27rpx; color: #41504A; line-height: 1.8; margin-bottom: 6rpx; }

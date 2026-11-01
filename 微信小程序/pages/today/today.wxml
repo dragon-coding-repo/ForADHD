@@ -1,0 +1,59 @@
+<view class="topbar">
+  <view class="tt">ADHD家庭助手</view>
+  <view class="hb-right">
+    <text class="hb-date">{{dateStr}}</text>
+    <button class="ghostbtn" bindtap="goMore">更多</button>
+  </view>
+</view>
+
+<view class="balance">
+  <view class="num">{{bal}}<text class="unit">颗星</text></view>
+  <view class="lbl">当前可用星星</view>
+  <view class="split">
+    <view><b>{{starN}}</b>目标打卡</view>
+    <view><b>{{bonusN}}</b>游戏奖励</view>
+    <view><b>{{spentN}}</b>已兑换</view>
+    <view><b>{{doneToday}}/{{total}}</b>今日目标</view>
+  </view>
+</view>
+
+<view class="card">
+  <view class="card-title">今日目标 <text class="card-more" bindtap="goCheckin">去打卡 ›</text></view>
+  <view wx:if="{{!goals.length}}" class="empty">还没有目标,去"打卡"里添加一个吧</view>
+  <view class="rowitem" wx:for="{{goals}}" wx:key="id">
+    <view class="grow"><view class="t1">{{item.name}}</view></view>
+    <button class="star {{item.on ? 'on today' : 'today'}}" data-gid="{{item.id}}" bindtap="onStar">★</button>
+  </view>
+</view>
+
+<view class="card">
+  <view class="card-title">今日作息</view>
+  <view class="srow" wx:for="{{sched}}" wx:key="time">
+    <text class="tm">{{item.time}}</text>
+    <text class="sitem {{item.done ? 'done' : ''}}">{{item.item}}</text>
+    <button class="ck {{item.done ? 'on' : ''}}" data-i="{{index}}" bindtap="onSched">✓</button>
+  </view>
+  <view class="prog"><view class="prog-fill" style="width:{{sTot ? sDone / sTot * 100 : 0}}%"></view></view>
+  <view class="small muted" style="margin-top:12rpx">完成 {{sDone}}/{{sTot}} · {{nextHint}}</view>
+</view>
+
+<view class="btnrow" style="margin:0 24rpx">
+  <button class="btn plain" bindtap="goLog">📝 记一笔</button>
+  <button class="btn" bindtap="openTimer">⏱ 开始专注</button>
+</view>
+
+<!-- 计时器浮层 -->
+<view class="mask {{timerOpen ? 'on' : ''}}" bindtap="closeTimer">
+  <view class="sheet" catchtap="noop">
+    <view class="grab"></view>
+    <view class="sheet-title">作业计时器</view>
+    <view class="timer-num">{{tNum}}</view>
+    <view class="timer-sub">{{tRunning ? "专注中 · 中途尽量不打扰孩子" : (tDone ? "这段专注完成啦!" : "先选一段时长 · 专注一段,休息一会")}}</view>
+    <view class="chips" style="justify-content:center;margin-bottom:28rpx">
+      <button class="chip {{tSel === item ? 'sel' : ''}} {{tRunning ? 'disabled' : ''}}" wx:for="{{tPresets}}" wx:key="*this" data-m="{{item}}" bindtap="tPreset">{{item}}分</button>
+    </view>
+    <button class="btn plain" bindtap="tReset">重置</button>
+    <button class="btn" style="margin-top:20rpx" bindtap="tToggle">{{tRunning ? "暂停" : "开始专注"}}</button>
+    <button wx:if="{{tDone}}" class="btn acc" style="margin-top:20rpx" bindtap="afterTimer">完成!给一个⭐</button>
+  </view>
+</view>
